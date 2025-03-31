@@ -1,38 +1,40 @@
-import { defineConfig } from "eslint/config";
-import globals from "globals";
-import js from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginVue from "eslint-plugin-vue";
+import { defineConfig } from 'eslint/config';
+import globals from 'globals';
+import js from '@eslint/js';
+import tseslint from 'typescript-eslint';
+import pluginVue from 'eslint-plugin-vue';
+import eslintConfigPrettier from 'eslint-config-prettier';
 
 export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,ts,vue}"] },
+  { files: ['**/*.{js,mjs,cjs,ts,vue}'] },
   {
-    files: ["**/*.{js,mjs,cjs,ts,vue}"],
+    files: ['**/*.{js,mjs,cjs,ts,vue}'],
     languageOptions: { globals: globals.browser },
   },
   {
-    files: ["**/*.{js,mjs,cjs,ts,vue}"],
+    files: ['**/*.{js,mjs,cjs,ts,vue}'],
     plugins: { js },
-    extends: ["js/recommended"],
+    extends: ['js/recommended'],
   },
   tseslint.configs.recommended,
-  pluginVue.configs["flat/essential"],
+  pluginVue.configs['flat/essential'],
   {
-    files: ["**/*.vue"],
+    files: ['**/*.vue'],
     languageOptions: { parserOptions: { parser: tseslint.parser } },
   },
   {
     ignores: [
-      "node_modules/**",
-      "dist/**",
-      "build/**",
-      "coverage/**",
-      ".nuxt/**",
-      ".output/**",
-      ".vercel/**",
-      ".output/public/**",
-      ".output/server/**",
-      ".output/client/**",
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      'coverage/**',
+      '.nuxt/**',
+      '.output/**',
+      '.vercel/**',
+      '.output/public/**',
+      '.output/server/**',
+      '.output/client/**',
     ],
   },
+  eslintConfigPrettier,
 ]);

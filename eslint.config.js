@@ -23,6 +23,18 @@ export default defineConfig([
     languageOptions: { parserOptions: { parser: tseslint.parser } },
   },
   {
+    files: ['**/*.vue'],
+    plugins: { vue },
+    rules: {
+      'vue/multi-word-component-names': [
+        'error',
+        {
+          ignores: ['index'],
+        },
+      ],
+    },
+  },
+  {
     ignores: [
       'node_modules/**',
       'dist/**',

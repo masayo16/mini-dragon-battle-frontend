@@ -1,19 +1,20 @@
-import { auth } from '~/plugins/firebase';
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged,
-} from 'firebase/auth';
-import type { User } from 'firebase/auth';
-import { ref } from 'vue';
-
-const user = ref<User | null>(null);
-
-onAuthStateChanged(auth, currentUser => {
-  user.value = currentUser;
-});
+import { ref, onMounted } from 'vue';
 
 export const useAuth = () => {
-  return {};
+  const { $firebase } = useNuxtApp();
+  const user = ref($firebase.auth.currentUser);
+  let unsubscribe: (() => void) | null = null; // NOTE: Firebase Authの監視を解除するための関数
+
+  onMounted(() => {
+    unsubscribe = $firebase.auth.onAuthStateChanged(currentUser => {
+      user.value = currentUser;
+    });
+  });
+
+  onUnmounted(() => {
+    // NOTE: コンポーネントが破棄される時に監視を停止（リソースを解放）
+    if (unsubscribe) {
+      unsubscribe();
+    }
+  });
 };

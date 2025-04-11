@@ -17,4 +17,6 @@ export const useAuth = () => {
       unsubscribe();
     }
   });
+
+  return { user };
 };

@@ -10,5 +10,6 @@ export default defineNuxtConfig({
       FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
     },
   },
-  plugins: ['~/plugins/firebase'],
+  typescript: { typeCheck: true },
+  plugins: ['~/plugins/firebase.client'],
 });

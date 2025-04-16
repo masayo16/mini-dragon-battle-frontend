@@ -32,4 +32,6 @@ export const useGoogleAuth = () => {
       console.error('ログアウト失敗', error);
     }
   };
+
+  return { user, loginWIthGoogle, logout, isLoading };
 };

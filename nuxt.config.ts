@@ -1,8 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
-  devtools: { enabled: true },
   modules: ['@nuxt/eslint', '@nuxt/test-utils'],
+  plugins: ['~/plugins/firebase.client'],
+  devtools: { enabled: true },
   runtimeConfig: {
     public: {
       FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
@@ -10,6 +10,6 @@ export default defineNuxtConfig({
       FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID,
     },
   },
+  compatibilityDate: '2024-11-01',
   typescript: { typeCheck: true },
-  plugins: ['~/plugins/firebase.client'],
 });

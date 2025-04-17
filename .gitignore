@@ -6,6 +6,9 @@
 .cache
 dist
 
+# Dependencies
+.eslintcache
+
 # Node dependencies
 node_modules
 
@@ -17,6 +20,7 @@ logs
 .DS_Store
 .fleet
 .idea
+.vscode
 
 # Local env files
 .env

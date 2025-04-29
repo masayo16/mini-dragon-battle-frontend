@@ -1,19 +1,15 @@
-import {
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from 'firebase/auth/web-extension';
+import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { ref } from 'vue';
 import { useNuxtApp } from '#app';
-import type { User } from 'firebase/auth';
 
 export const useGoogleAuth = () => {
   const { $firebase } = useNuxtApp();
-  const user = ref<User | null>($firebase.auth.currentUser);
-  const isLoading = ref(true);
+  const user = ref($firebase.auth.currentUser);
+  const isLoading = ref(false);
 
   const provider = new GoogleAuthProvider();
 
-  const loginWIthGoogle = async () => {
+  const loginWithGoogle = async () => {
     try {
       const result = await signInWithPopup($firebase.auth, provider);
       user.value = result.user;
@@ -33,5 +29,5 @@ export const useGoogleAuth = () => {
     }
   };
 
-  return { user, loginWIthGoogle, logout, isLoading };
+  return { user, loginWithGoogle, logout, isLoading };
 };

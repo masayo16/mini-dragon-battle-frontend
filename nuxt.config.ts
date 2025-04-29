@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  modules: ['@nuxt/eslint', '@nuxt/test-utils'],
+  srcDir: 'src',
+  modules: ['@nuxt/eslint', '@nuxt/test-utils/module'],
   plugins: ['~/plugins/firebase.client'],
   devtools: { enabled: true },
   runtimeConfig: {

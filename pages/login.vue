@@ -6,7 +6,7 @@ const { loginWithGoogle, isLoading } = useGoogleAuth();
 
 <template>
   <div class="login-container">
-    <button @click="loginWithGoogle" :disabled="isLoading">
+    <button :disabled="isLoading" @click="loginWithGoogle">
       Googleアカウントでログイン
     </button>
   </div>

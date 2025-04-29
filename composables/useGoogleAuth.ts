@@ -1,10 +1,11 @@
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
+import { ref } from 'vue';
 import { useNuxtApp } from '#app';
 
 export const useGoogleAuth = () => {
   const { $firebase } = useNuxtApp();
   const user = ref($firebase.auth.currentUser);
-  const isLoading = ref(true);
+  const isLoading = ref(false);
 
   const provider = new GoogleAuthProvider();
 

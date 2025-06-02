@@ -41,8 +41,8 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - run: pnpm run lint --if-present
-      - run: pnpm test        --if-present
+      - run: pnpm run lint
+      - run: pnpm test
       - run: pnpm run build
 
       - uses: actions/upload-artifact@v4

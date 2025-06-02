@@ -26,17 +26,16 @@ jobs:
       id-token: write # 👉 OIDC トークン発行に必須
     steps:
       - uses: actions/checkout@v4
-
+      - name: Enable Corepack
+        run: |
+          corepack enable
+          corepack prepare pnpm@8.15.5 --activate
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
 
-      - name: Enable Corepack
-        run: |
-          corepack enable
-          corepack prepare pnpm@8.15.5 --activate
       - run: pnpm --version
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile

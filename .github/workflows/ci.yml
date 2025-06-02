@@ -1,0 +1,105 @@
+name: CI / CD – mini-dragon-frontend
+
+# ────────────────────────────────────────────────
+# ① トリガー
+# ────────────────────────────────────────────────
+on:
+  push:
+    branches: [ dev, main ]
+  workflow_dispatch:
+
+# ────────────────────────────────────────────────
+# ② 共通設定
+# ────────────────────────────────────────────────
+env:
+  # GitHub Actions Variables（Settings › Actions › Variables）
+  AWS_REGION: ${{ vars.AWS_REGION }}
+
+jobs:
+# ╭─────────────────────────────────────────────╮
+# │  build – lint / test / build アーティファクト │
+# ╰─────────────────────────────────────────────╯
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write          # 👉 OIDC トークン発行に必須
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: corepack enable   # pnpm を自動インストール
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm run lint --if-present
+      - run: pnpm test        --if-present
+      - run: pnpm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+# ╭─────────────────────────────────────────────╮
+# │  deploy – S3 sync & CloudFront invalidation │
+# ╰─────────────────────────────────────────────╯
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    # ― dev はそのまま、main は Environment “prod” で手動承認 ―
+    environment:
+      name: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      # ──────────────────────────────
+      # 1) AWS 認証 (OIDC + IAM ロール)
+      # ──────────────────────────────
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ github.ref == 'refs/heads/main' && secrets.AWS_ROLE_PROD || secrets.AWS_ROLE_DEV }}
+          aws-region:     ${{ env.AWS_REGION }}
+
+      # ──────────────────────────────
+      # 2) S3 へ同期
+      # ──────────────────────────────
+      - name: Sync to S3
+        run: |
+          BUCKET=${{ github.ref == 'refs/heads/main' && vars.S3_BUCKET_PROD || vars.S3_BUCKET_DEV }}
+          aws s3 sync dist "s3://$BUCKET" --delete --acl private
+
+      # ──────────────────────────────
+      # 3) CloudFront キャッシュ無効化
+      # ──────────────────────────────
+      - name: Invalidate CloudFront
+        run: |
+          CF_ID=${{ github.ref == 'refs/heads/main' && vars.CF_DIST_ID_PROD || vars.CF_DIST_ID_DEV }}
+          aws cloudfront create-invalidation \
+            --distribution-id "$CF_ID" \
+            --paths "/*"
+
+      # ──────────────────────────────
+      # 4) 成果物 URL を出力 (オプション)
+      # ──────────────────────────────
+      - name: Set output URL
+        run: |
+          if [[ "${{ github.ref }}" == 'refs/heads/main' ]]; then
+            echo "url=https://mini-dragon-battle.com" >> "$GITHUB_OUTPUT"
+          else
+            echo "url=https://dev.mini-dragon-battle.com" >> "$GITHUB_OUTPUT"
+          fi

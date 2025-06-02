@@ -69,7 +69,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: dist
-          path: dist
+          path: .output/public
 
       # ──────────────────────────────
       # 1) AWS 認証 (OIDC + IAM ロール)

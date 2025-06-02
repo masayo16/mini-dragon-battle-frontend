@@ -37,7 +37,7 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@8.15.5 --activate
-
+      - run: pnpm --version
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 

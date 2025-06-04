@@ -74,6 +74,11 @@ jobs:
       # ──────────────────────────────
       # 1) AWS 認証 (OIDC + IAM ロール)
       # ──────────────────────────────
+      - name: Debug GitHub OIDC Context
+        run: |
+          echo "ref: ${{ github.ref }}"
+          echo "repository: ${{ github.repository }}"
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

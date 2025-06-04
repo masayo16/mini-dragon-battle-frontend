@@ -78,14 +78,7 @@ jobs:
         run: |
           echo "ref: ${{ github.ref }}"
           echo "repository: ${{ github.repository }}"
-      - name: Dump OIDC token claims (safe)
-        id: dump
-        run: |
-          # audience=sts.amazonaws.com を明示して取得
-          RAW=$(curl -s -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-                     "${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=sts.amazonaws.com")
-          # JWT の 2 番目の部分（payload）だけ取り出して base64 デコード
-          echo "$RAW" | cut -d '.' -f 2 | base64 --decode | jq .
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:

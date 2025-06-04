@@ -1,7 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   srcDir: 'src',
-  ssr: false,
+  ssr: true,
+  nitro: {
+    preset: 'static',
+    prerender: {
+      routes: ['/'],
+      ignore: ['/login'],
+    },
+  },
   modules: ['@nuxt/eslint', '@nuxt/test-utils/module'],
   plugins: ['~/plugins/firebase.client'],
   devtools: { enabled: true },

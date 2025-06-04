@@ -91,7 +91,7 @@ jobs:
       - name: Sync to S3
         run: |
           BUCKET=${{ github.ref == 'refs/heads/main' && vars.S3_BUCKET_PROD || vars.S3_BUCKET_DEV }}
-          aws s3 sync dist "s3://$BUCKET" --delete --acl private
+          aws s3 sync .output/public "s3://$BUCKET" --delete --acl private
 
       # ──────────────────────────────
       # 3) CloudFront キャッシュ無効化

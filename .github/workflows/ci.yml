@@ -36,7 +36,13 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
-
+      - name: Generate .env.production
+        run: |
+          cat<<EOF > .env.production
+          FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
+          EOF
       - run: pnpm --version
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile

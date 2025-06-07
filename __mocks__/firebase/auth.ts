@@ -12,6 +12,8 @@ export class GoogleAuthProvider
   providerId = 'google.com';
 }
 
+export const getAuth = vi.fn<typeof import('firebase/auth').getAuth>();
+
 export const signInWithPopup = vi
   .fn<typeof import('firebase/auth').signInWithPopup>()
   .mockResolvedValue({

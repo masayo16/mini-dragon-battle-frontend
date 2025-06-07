@@ -3,6 +3,16 @@ import { ref } from 'vue';
 import { useNuxtApp } from '#app';
 
 export const useGoogleAuth = () => {
+  // NOTE:SSRを無視する。
+  if (!import.meta.client) {
+    return {
+      user: ref(null),
+      isLoading: ref(false),
+      loginWithGoogle: () => {},
+      logout: () => {},
+    };
+  }
+
   const { $firebase } = useNuxtApp();
   const user = ref($firebase.auth.currentUser);
   const isLoading = ref(false);

@@ -48,4 +48,14 @@ describe('middleware/auth.global.ts', () => {
 
     expect(navigateTo).not.toHaveBeenCalled();
   });
+
+  it('ユーザーが未ログインで、ルートパスにアクセスしようとした場合、リダイレクトしない', () => {
+    mockUseGoogleAuth.mockReturnValue({
+      user: { value: null },
+    });
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    authMW({ path: '/' } as any, {} as any);
+
+    expect(navigateTo).not.toHaveBeenCalled();
+  });
 });

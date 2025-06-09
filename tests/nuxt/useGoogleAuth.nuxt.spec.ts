@@ -6,7 +6,7 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
-const { user, loginWithGoogle, logout, isLoading } = useGoogleAuth();
+const { user, loginWithGoogle, logout } = useGoogleAuth();
 
 describe('loginWithGoogle', () => {
   it('ログイン成功', async () => {
@@ -22,7 +22,7 @@ describe('loginWithGoogle', () => {
     const { signInWithPopup } = await import('firebase/auth');
     vi.mocked(signInWithPopup).mockRejectedValue(new Error('ログイン失敗'));
     await loginWithGoogle();
-    expect(isLoading.value).toBe(false);
+    expect(user.value).toBeNull();
   });
 
   describe('logout', () => {

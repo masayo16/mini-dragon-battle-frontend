@@ -24,6 +24,7 @@ export const useGoogleAuth = () => {
       user.value = result.user;
     } catch (error) {
       console.error('ログイン失敗', error);
+      throw new Error();
     }
   };
 

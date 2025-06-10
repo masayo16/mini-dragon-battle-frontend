@@ -9,7 +9,13 @@ export default defineNuxtConfig({
       ignore: ['/login'],
     },
   },
-  modules: ['@nuxt/eslint', '@nuxt/test-utils/module'],
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/test-utils/module',
+    '@pinia/nuxt',
+    '@nuxtjs/tailwindcss',
+  ],
+  css: ['~/assets/css/tailwind.css'],
   plugins: ['~/plugins/firebase.client'],
   devtools: { enabled: true },
   runtimeConfig: {

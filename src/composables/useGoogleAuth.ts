@@ -7,7 +7,7 @@ export const useGoogleAuth = () => {
   if (!import.meta.client) {
     return {
       user: ref(null),
-      isLoading: ref(false),
+
       loginWithGoogle: () => {},
       logout: () => {},
     };
@@ -15,7 +15,6 @@ export const useGoogleAuth = () => {
 
   const { $firebase } = useNuxtApp();
   const user = ref($firebase.auth.currentUser);
-  const isLoading = ref(false);
 
   const provider = new GoogleAuthProvider();
 
@@ -25,8 +24,7 @@ export const useGoogleAuth = () => {
       user.value = result.user;
     } catch (error) {
       console.error('ログイン失敗', error);
-    } finally {
-      isLoading.value = false;
+      throw new Error();
     }
   };
 
@@ -39,5 +37,5 @@ export const useGoogleAuth = () => {
     }
   };
 
-  return { user, loginWithGoogle, logout, isLoading };
+  return { user, loginWithGoogle, logout };
 };

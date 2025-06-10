@@ -4,9 +4,10 @@ import { useGoogleAuth } from '@/composables/useGoogleAuth';
 
 beforeEach(() => {
   vi.clearAllMocks();
+  user.value = null; //NOTE: ログイン状態のリセット
 });
 
-const { user, loginWithGoogle, logout, isLoading } = useGoogleAuth();
+const { user, loginWithGoogle, logout } = useGoogleAuth();
 
 describe('loginWithGoogle', () => {
   it('ログイン成功', async () => {
@@ -22,19 +23,25 @@ describe('loginWithGoogle', () => {
     const { signInWithPopup } = await import('firebase/auth');
     vi.mocked(signInWithPopup).mockRejectedValue(new Error('ログイン失敗'));
     await loginWithGoogle();
-    expect(isLoading.value).toBe(false);
+    expect(user.value).toBeNull();
+  });
+});
+describe('logout', () => {
+  it('ログアウト成功', async () => {
+    await logout();
+    expect(user.value).toBeNull();
   });
 
-  describe('logout', () => {
-    it('ログアウト成功', async () => {
-      await logout();
-      expect(user.value).toBe(null);
-    });
+  it('ログアウト失敗', async () => {
+    /*eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    user.value = { uid: 'test-uid' } as any; // NOTE: 初期状態をログイン状態に設定
 
-    it('ログアウト失敗', async () => {
-      const { signOut } = await import('firebase/auth');
-      vi.mocked(signOut).mockRejectedValue(new Error('ログアウト失敗'));
-      await logout();
+    const { signOut } = await import('firebase/auth');
+    vi.mocked(signOut).mockRejectedValue(new Error('ログアウト失敗'));
+    await logout();
+
+    expect(user.value).toEqual({
+      uid: 'test-uid',
     });
   });
 });

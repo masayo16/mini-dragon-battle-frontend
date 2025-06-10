@@ -26,7 +26,11 @@ const handleLogin = async () => {
       <LoadingIndicator :show="loading.isLoading" />
     </div>
 
-    <button class="btn-primary" @click="handleLogin">
+    <button
+      class="btn-primary"
+      :disabled="loading.isLoading"
+      @click="handleLogin"
+    >
       Googleアカウントでログイン
     </button>
   </div>

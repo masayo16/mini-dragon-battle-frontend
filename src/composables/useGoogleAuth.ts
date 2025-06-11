@@ -23,8 +23,8 @@ export const useGoogleAuth = () => {
       const result = await signInWithPopup($firebase.auth, provider);
       user.value = result.user;
     } catch (error) {
-      console.error('ログイン失敗', error);
-      throw new Error();
+      console.error(error);
+      throw new Error('ログイン失敗');
     }
   };
 

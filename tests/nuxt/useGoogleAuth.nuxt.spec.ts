@@ -19,10 +19,11 @@ describe('loginWithGoogle', () => {
     });
   });
 
-  it('ログイン失敗', async () => {
+  it('ログイン失敗で例外を投げ、ユーザーは null のまま', async () => {
     const { signInWithPopup } = await import('firebase/auth');
     vi.mocked(signInWithPopup).mockRejectedValue(new Error('ログイン失敗'));
-    await loginWithGoogle();
+
+    await expect(loginWithGoogle()).rejects.toThrow('ログイン失敗');
     expect(user.value).toBeNull();
   });
 });

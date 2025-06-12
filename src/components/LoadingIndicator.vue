@@ -4,7 +4,7 @@ defineProps<{ show: boolean }>();
 
 <template>
   <div v-if="show" class="loading-backdrop">
-    <div class="spinner">読み込み中...</div>
+    <div class="spinner">Just a moment…</div>
   </div>
 </template>
 

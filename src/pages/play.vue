@@ -14,12 +14,18 @@ onMounted(() => {
   useGame(container);
 });
 </script>
+
 <template>
-  <!-- 画面中央に 640x480 のキャンバスを出すだけ -->
-  <div ref="container" class="game-container" />
+  <div class="play-root">
+    <!-- 画面中央に 640x480 のキャンバスを出すだけ -->
+    <div ref="container" class="game-container" />
+  </div>
 </template>
 
 <style scoped>
+.play-root {
+  width: 100vw;
+}
 .game-container {
   width: 640px;
   height: 480px;

@@ -11,7 +11,7 @@ const handleLogin = async () => {
   loading.startLoading();
   try {
     await loginWithGoogle();
-    router.push({ name: 'play' });
+    await router.push({ name: 'play' });
   } catch (error) {
     console.error(error);
   } finally {

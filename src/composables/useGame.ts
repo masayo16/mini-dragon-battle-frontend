@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { Assets } from 'pixi.js';
+
 import type { Ref } from 'vue';
 
 export async function useGame(container: Ref<HTMLElement | null>) {
@@ -15,7 +15,7 @@ export async function useGame(container: Ref<HTMLElement | null>) {
 
   container.value.appendChild(app.canvas);
 
-  const texture = await Assets.load(
+  const texture = await PIXI.Assets.load(
     'https://pixijs.io/examples/examples/assets/bunny.png',
   );
 

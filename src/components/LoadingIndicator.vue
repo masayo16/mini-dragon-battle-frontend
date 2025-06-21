@@ -1,3 +1,10 @@
+<!--
+LoadingIndicator Component
+Purpose: Displays retro-styled loading screen with terminal interface and progress animations
+Responsibility: Provides visual feedback during async operations with consistent theming and accessibility
+Usage: <LoadingIndicator :show="isLoading" />
+-->
+
 <script setup lang="ts">
 defineProps<{ show: boolean }>();
 </script>

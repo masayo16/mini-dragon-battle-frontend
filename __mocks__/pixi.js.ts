@@ -11,7 +11,7 @@ export const Application = vi.fn().mockImplementation(() => {
 });
 
 export const Texture = vi.fn().mockImplementation((img?: HTMLImageElement) => ({
-  baseTexture: { recource: { source: img ?? document.createElement('img') } },
+  baseTexture: { resource: { source: img ?? document.createElement('img') } },
   width: 32,
   height: 32,
 }));

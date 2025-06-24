@@ -64,9 +64,8 @@ export const Sprite = vi.fn().mockImplementation((tex?: unknown) => {
     get height() {
       return _texture.height;
     },
-    x: 0,
-    y: 0,
     destroy: vi.fn(),
+    update: vi.fn(),
   };
 });
 

@@ -8,7 +8,7 @@ export class Player extends Sprite {
   nextDir: GridPos = { col: 0, row: 0 };
 
   async init() {
-    this.texture = await Assets.load('/images/player.png');
+    this.texture = await Assets.load('/assets/images/player.png');
     this.anchor.set(0.5);
   }
 

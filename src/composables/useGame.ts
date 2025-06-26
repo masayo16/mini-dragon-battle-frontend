@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 
 import type { Ref } from 'vue';
+import { onUnmounted } from 'vue';
 
 import { Player } from '~/game/entities/Player';
 import { gridToPixel, type GridPos } from '~/game/grid/Grid';
@@ -22,15 +23,16 @@ export async function useGame(container: Ref<HTMLElement | null>) {
 
   const player = new Player();
   await player.init();
-  player.position.set(...Object.values(gridToPixel({ col: 14, row: 23 })));
+  const pos = gridToPixel({ col: 14, row: 23 });
+  player.position.set(pos.x, pos.y);
   app.stage.addChild(player);
 
   const onArrowKey = (e: KeyboardEvent) => {
     const map: Record<string, GridPos> = {
       ArrowLeft: { col: -1, row: 0 },
       ArrowRight: { col: 1, row: 0 },
-      ArrowUp: { col: 0, row: 1 },
-      ArrowDown: { col: 0, row: -1 },
+      ArrowUp: { col: 0, row: -1 },
+      ArrowDown: { col: 0, row: 1 },
     };
     const d = map[e.key];
 

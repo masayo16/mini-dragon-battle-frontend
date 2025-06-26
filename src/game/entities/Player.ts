@@ -10,6 +10,8 @@ export class Player extends Sprite {
   async init() {
     this.texture = await Assets.load('/assets/images/player.png');
     this.anchor.set(0.5);
+    this.width = TILE_SIZE;
+    this.height = TILE_SIZE;
   }
 
   // NOTE: 1フレーム更新：dt は秒
@@ -37,7 +39,8 @@ export class Player extends Sprite {
       }
       this.position.set(center.x, center.y);
     }
-    this.x = this.dir.col * this.speed * TILE_SIZE * dt;
-    this.y = this.dir.row * this.speed * TILE_SIZE * dt;
+    this.x += this.dir.col * this.speed * TILE_SIZE * dt;
+    this.y += this.dir.row * this.speed * TILE_SIZE * dt;
+    console.log(this.x, this.y);
   }
 }

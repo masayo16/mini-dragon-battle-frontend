@@ -10,6 +10,7 @@ export async function loadLevel(file: string, stage: Container) {
   const powerTex = sheet.textures['power.png'];
 
   const levelText = await (await fetch(file)).text();
+
   levelText.split('\n').forEach((line, row) => {
     [...line].forEach((ch, col) => {
       const pos = gridToPixel({ col, row });

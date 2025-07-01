@@ -41,6 +41,5 @@ export class Player extends Sprite {
     }
     this.x += this.dir.col * this.speed * TILE_SIZE * dt;
     this.y += this.dir.row * this.speed * TILE_SIZE * dt;
-    console.log(this.x, this.y);
   }
 }

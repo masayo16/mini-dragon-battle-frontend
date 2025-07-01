@@ -12,8 +12,8 @@ export async function useGame(container: Ref<HTMLElement | null>) {
 
   const app = new PIXI.Application();
   await app.init({
-    width: 800,
-    height: 600,
+    width: 1800,
+    height: 1736,
     background: 0x000000,
     antialias: true,
   });
@@ -23,7 +23,7 @@ export async function useGame(container: Ref<HTMLElement | null>) {
 
   const player = new Player();
   await player.init();
-  const pos = gridToPixel({ col: 14, row: 23 });
+  const pos = gridToPixel({ col: 14, row: 12 });
   player.position.set(pos.x, pos.y);
   app.stage.addChild(player);
 

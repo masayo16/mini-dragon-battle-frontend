@@ -1,13 +1,11 @@
 import type { Container } from 'pixi.js';
-import { Sprite, Assets, Texture } from 'pixi.js';
-import { TILE_SIZE, gridToPixel } from './Grid';
+import { Sprite, Assets } from 'pixi.js';
+import { gridToPixel } from './Grid';
 
 export async function loadLevel(file: string, stage: Container) {
-  const sheet = await Assets.load('/assets/images/tilesheet.json');
-  const wallTex = sheet.textures['wall.png'];
-  const pathTex = sheet.textures['path.png'];
-  const dotTex = sheet.textures['dot.png'];
-  const powerTex = sheet.textures['power.png'];
+  const wallTex = await Assets.load('/assets/images/wall.png');
+  const dotTex = await Assets.load('/assets/images/dot.png');
+  const powerTex = await Assets.load('/assets/images/power.png');
 
   const levelText = await (await fetch(file)).text();
 
@@ -17,7 +15,6 @@ export async function loadLevel(file: string, stage: Container) {
       let sprite: Sprite | null = null;
       switch (ch) {
         case ' ':
-          sprite = new Sprite(pathTex);
           break;
         case '#':
           sprite = new Sprite(wallTex);

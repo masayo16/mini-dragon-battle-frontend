@@ -6,10 +6,13 @@ export async function loadLevel(
   file: string,
   stage: Container,
   walls: Set<string>,
-) {
+): Promise<{ dots: Set<Sprite>; powers: Set<Sprite> }> {
   const wall = await Assets.load('/assets/images/wall.png');
   const dot = await Assets.load('/assets/images/dot.png');
   const powerTex = await Assets.load('/assets/images/power.png');
+
+  const dots = new Set<Sprite>();
+  const powers = new Set<Sprite>();
 
   const levelText = await (await fetch(file)).text();
 
@@ -26,9 +29,11 @@ export async function loadLevel(
           break;
         case '.':
           sprite = new Sprite(dot);
+          dots.add(sprite);
           break;
         case 'o':
           sprite = new Sprite(powerTex);
+          powers.add(sprite);
           break;
       }
       if (sprite) {
@@ -38,4 +43,6 @@ export async function loadLevel(
       }
     });
   });
+
+  return { dots, powers };
 }

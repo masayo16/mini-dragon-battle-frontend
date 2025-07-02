@@ -20,7 +20,13 @@ export async function useGame(container: Ref<HTMLElement | null>) {
   container.value.appendChild(app.canvas);
 
   const walls = new Set<string>();
-  await loadLevel('/assets/level/level1.txt', app.stage, walls);
+  const { dots, powers } = await loadLevel(
+    '/assets/level/level1.txt',
+    app.stage,
+    walls,
+  );
+
+  const scoreStore = useScoreStore();
 
   const player = new Player();
   await player.init();
@@ -46,6 +52,14 @@ export async function useGame(container: Ref<HTMLElement | null>) {
   const isWall = (g: GridPos) => walls.has(`${g.row},${g.col}`);
   app.ticker.add(({ deltaMS }) => {
     player.update(deltaMS / 1000, isWall);
+
+    dots.forEach(dot => {
+      if (Math.abs(dot.x - player.x) < 8 && Math.abs(dot.y - player.y) < 8) {
+        app.stage.removeChild(dot);
+        dots.delete(dot);
+        scoreStore.add(10);
+      }
+    });
   });
 
   onUnmounted(() => {

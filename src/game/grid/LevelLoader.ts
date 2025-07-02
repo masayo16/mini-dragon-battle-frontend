@@ -2,9 +2,13 @@ import type { Container } from 'pixi.js';
 import { Sprite, Assets } from 'pixi.js';
 import { gridToPixel } from './Grid';
 
-export async function loadLevel(file: string, stage: Container) {
-  const wallTex = await Assets.load('/assets/images/wall.png');
-  const dotTex = await Assets.load('/assets/images/dot.png');
+export async function loadLevel(
+  file: string,
+  stage: Container,
+  walls: Set<string>,
+) {
+  const wall = await Assets.load('/assets/images/wall.png');
+  const dot = await Assets.load('/assets/images/dot.png');
   const powerTex = await Assets.load('/assets/images/power.png');
 
   const levelText = await (await fetch(file)).text();
@@ -17,10 +21,11 @@ export async function loadLevel(file: string, stage: Container) {
         case ' ':
           break;
         case '#':
-          sprite = new Sprite(wallTex);
+          walls.add(`${row},${col}`);
+          sprite = new Sprite(wall);
           break;
         case '.':
-          sprite = new Sprite(dotTex);
+          sprite = new Sprite(dot);
           break;
         case 'o':
           sprite = new Sprite(powerTex);

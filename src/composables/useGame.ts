@@ -12,14 +12,15 @@ export async function useGame(container: Ref<HTMLElement | null>) {
 
   const app = new PIXI.Application();
   await app.init({
-    width: 1800,
-    height: 1736,
+    width: 896,
+    height: 512,
     background: 0x000000,
     antialias: true,
   });
   container.value.appendChild(app.canvas);
 
-  await loadLevel('/assets/level/level1.txt', app.stage);
+  const walls = new Set<string>();
+  await loadLevel('/assets/level/level1.txt', app.stage, walls);
 
   const player = new Player();
   await player.init();
@@ -42,9 +43,7 @@ export async function useGame(container: Ref<HTMLElement | null>) {
   };
   window.addEventListener('keydown', onArrowKey);
 
-  const walls = new Set<string>();
   const isWall = (g: GridPos) => walls.has(`${g.row},${g.col}`);
-
   app.ticker.add(({ deltaMS }) => {
     player.update(deltaMS / 1000, isWall);
   });

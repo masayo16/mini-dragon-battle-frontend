@@ -20,7 +20,7 @@ export async function useGame(container: Ref<HTMLElement | null>) {
   container.value.appendChild(app.canvas);
 
   const walls = new Set<string>();
-  const { dots, powers } = await loadLevel(
+  const { dots } = await loadLevel(
     '/assets/level/level1.txt',
     app.stage,
     walls,

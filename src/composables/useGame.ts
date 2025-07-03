@@ -1,57 +1,69 @@
 import * as PIXI from 'pixi.js';
 
 import type { Ref } from 'vue';
+import { onUnmounted } from 'vue';
+
+import { Player } from '~/game/entities/Player';
+import { gridToPixel, type GridPos } from '~/game/grid/Grid';
+import { loadLevel } from '~/game/grid/LevelLoader';
 
 export async function useGame(container: Ref<HTMLElement | null>) {
   if (!container.value) return;
 
   const app = new PIXI.Application();
   await app.init({
-    width: 800,
-    height: 600,
+    width: 896,
+    height: 512,
     background: 0x000000,
     antialias: true,
   });
-
   container.value.appendChild(app.canvas);
 
-  const texture = await PIXI.Assets.load(
-    'https://pixijs.io/examples/examples/assets/bunny.png',
+  const walls = new Set<string>();
+  const { dots, powers } = await loadLevel(
+    '/assets/level/level1.txt',
+    app.stage,
+    walls,
   );
 
-  const player = new PIXI.Sprite(texture);
-  player.anchor.set(0.5);
-  player.x = app.screen.width / 2;
-  player.y = app.screen.height - player.height / 2;
+  const scoreStore = useScoreStore();
+
+  const player = new Player();
+  await player.init();
+  const pos = gridToPixel({ col: 14, row: 12 });
+  player.position.set(pos.x, pos.y);
   app.stage.addChild(player);
 
-  const keys = new Set<string>();
-  const onKey = (e: KeyboardEvent) =>
-    e.type === 'keydown' ? keys.add(e.key) : keys.delete(e.key);
+  const onArrowKey = (e: KeyboardEvent) => {
+    const map: Record<string, GridPos> = {
+      ArrowLeft: { col: -1, row: 0 },
+      ArrowRight: { col: 1, row: 0 },
+      ArrowUp: { col: 0, row: -1 },
+      ArrowDown: { col: 0, row: 1 },
+    };
+    const d = map[e.key];
 
-  window.addEventListener('keydown', onKey);
-  window.addEventListener('keyup', onKey);
-
-  const speed = 5;
-  app.ticker.add(ticker => {
-    const delta = ticker.deltaTime;
-
-    if (keys.has('ArrowLeft')) {
-      player.x -= speed * delta;
+    if (d) {
+      player.nextDir = d;
     }
-    if (keys.has('ArrowRight')) {
-      player.x += speed * delta;
-    }
+  };
+  window.addEventListener('keydown', onArrowKey);
 
-    player.x = Math.max(
-      player.width / 2,
-      Math.min(player.x, app.screen.width - player.width / 2),
-    );
+  const isWall = (g: GridPos) => walls.has(`${g.row},${g.col}`);
+  app.ticker.add(({ deltaMS }) => {
+    player.update(deltaMS / 1000, isWall);
+
+    dots.forEach(dot => {
+      if (Math.abs(dot.x - player.x) < 8 && Math.abs(dot.y - player.y) < 8) {
+        app.stage.removeChild(dot);
+        dots.delete(dot);
+        scoreStore.add(10);
+      }
+    });
   });
 
   onUnmounted(() => {
-    window.removeEventListener('keydown', onKey);
-    window.removeEventListener('keyup', onKey);
+    window.removeEventListener('keydown', onArrowKey);
     app.destroy(true);
   });
 }

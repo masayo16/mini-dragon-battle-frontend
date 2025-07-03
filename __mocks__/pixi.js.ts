@@ -11,15 +11,47 @@ export const Application = vi.fn().mockImplementation(() => {
 });
 
 export const Texture = vi.fn().mockImplementation((img?: HTMLImageElement) => ({
-  baseTexture: { recource: { source: img ?? document.createElement('img') } },
+  baseTexture: { resource: { source: img ?? document.createElement('img') } },
   width: 32,
   height: 32,
 }));
 
 export const Sprite = vi.fn().mockImplementation((tex?: unknown) => {
   let _texture = tex || new Texture();
+
+  const position = {
+    x: 0,
+    y: 0,
+    set(x: number, y: number) {
+      this.x = x;
+      this.y = y;
+    },
+  };
+
+  const anchor = {
+    x: 0,
+    y: 0,
+    set(x = 0, y = x) {
+      this.x = x;
+      this.y = y;
+    },
+  };
+
   return {
-    anchor: { set: vi.fn() },
+    anchor,
+    position,
+    get x() {
+      return position.x;
+    },
+    set x(v) {
+      position.x = v;
+    },
+    get y() {
+      return position.y;
+    },
+    set y(v) {
+      position.y = v;
+    },
     get texture() {
       return _texture;
     },
@@ -32,9 +64,8 @@ export const Sprite = vi.fn().mockImplementation((tex?: unknown) => {
     get height() {
       return _texture.height;
     },
-    x: 0,
-    y: 0,
     destroy: vi.fn(),
+    update: vi.fn(),
   };
 });
 

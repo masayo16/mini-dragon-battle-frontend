@@ -4,6 +4,7 @@ import type { Ref } from 'vue';
 import { onUnmounted } from 'vue';
 
 import { Player } from '~/game/entities/Player';
+import { absDist } from '~/game/grid/AbsDist';
 import { gridToPixel, type GridPos } from '~/game/grid/Grid';
 import { loadLevel } from '~/game/grid/LevelLoader';
 
@@ -20,7 +21,7 @@ export async function useGame(container: Ref<HTMLElement | null>) {
   container.value.appendChild(app.canvas);
 
   const walls = new Set<string>();
-  const { dots } = await loadLevel(
+  const { dots, powers } = await loadLevel(
     '/assets/level/level1.txt',
     app.stage,
     walls,
@@ -54,10 +55,19 @@ export async function useGame(container: Ref<HTMLElement | null>) {
     player.update(deltaMS / 1000, isWall);
 
     dots.forEach(dot => {
-      if (Math.abs(dot.x - player.x) < 8 && Math.abs(dot.y - player.y) < 8) {
+      if (absDist(player, dot) < 8) {
         app.stage.removeChild(dot);
         dots.delete(dot);
         scoreStore.add(10);
+      }
+    });
+
+    powers.forEach(power => {
+      if (absDist(player, power) < 8) {
+        app.stage.removeChild(power);
+        powers.delete(power);
+        player.powerUp(8);
+        scoreStore.add(50);
       }
     });
   });

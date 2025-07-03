@@ -6,6 +6,8 @@ export class Player extends Sprite {
   speed = 4; // NOTE: セル/秒
   dir: GridPos = { col: 0, row: 0 };
   nextDir: GridPos = { col: 0, row: 0 };
+  powered = false;
+  powerTimer = 0; //NOTE: 秒
 
   async init() {
     this.texture = await Assets.load('/assets/images/player.png');
@@ -14,11 +16,25 @@ export class Player extends Sprite {
     this.height = TILE_SIZE;
   }
 
+  powerUp(seconds = 8) {
+    this.powered = true;
+    this.powerTimer = seconds;
+    this.tint = 0xffff00;
+  }
+
   // NOTE: 1フレーム更新：dt は秒
   update(dt: number, isWall: (g: GridPos) => boolean) {
     const gridPos = pixelToGrid(this);
     const center = gridToPixel(gridPos);
     const dist = Math.hypot(this.x - center.x, this.y - center.y);
+
+    if (this.powered) {
+      this.powerTimer -= dt;
+      if (this.powerTimer <= 0) {
+        this.powered = false;
+        this.tint = 0xffffff;
+      }
+    }
 
     // NOTE: 中央到達後に曲がれるかを判定
     if (dist < 1) {

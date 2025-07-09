@@ -3,9 +3,18 @@ import { ref } from 'vue';
 import { useNuxtApp } from '#app';
 
 export const useGoogleAuth = () => {
+  // NOTE:SSRを無視する。
+  if (!import.meta.client) {
+    return {
+      user: ref(null),
+
+      loginWithGoogle: () => {},
+      logout: () => {},
+    };
+  }
+
   const { $firebase } = useNuxtApp();
   const user = ref($firebase.auth.currentUser);
-  const isLoading = ref(false);
 
   const provider = new GoogleAuthProvider();
 
@@ -14,9 +23,8 @@ export const useGoogleAuth = () => {
       const result = await signInWithPopup($firebase.auth, provider);
       user.value = result.user;
     } catch (error) {
-      console.error('ログイン失敗', error);
-    } finally {
-      isLoading.value = false;
+      console.error(error);
+      throw new Error('ログイン失敗');
     }
   };
 
@@ -29,5 +37,5 @@ export const useGoogleAuth = () => {
     }
   };
 
-  return { user, loginWithGoogle, logout, isLoading };
+  return { user, loginWithGoogle, logout };
 };

@@ -1,0 +1,10 @@
+/* Tailwind v4 - single import */
+@import "tailwindcss";
+
+/* Custom component layer */
+@layer utilities {
+  .btn-primary {
+    @apply pl-4 pr-4 pt-2 pb-2 bg-blue-600 text-white rounded font-medium
+           transition hover:bg-blue-700 disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+}

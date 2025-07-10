@@ -15,11 +15,13 @@ defineProps<StarfieldBackgroundProps>();
 </script>
 
 <template>
-  <div :class="[
-    'stars-bg',
-    `stars-${intensity || 'medium'}`,
-    { 'stars-animated': animated !== false }
-  ]"></div>
+  <div
+    :class="[
+      'stars-bg',
+      `stars-${intensity || 'medium'}`,
+      { 'stars-animated': animated !== false },
+    ]"
+  ></div>
 </template>
 
 <style scoped>
@@ -34,31 +36,55 @@ defineProps<StarfieldBackgroundProps>();
 }
 
 .stars-light {
-  background-image: 
+  background-image:
     radial-gradient(1px 1px at 50px 50px, #fff, transparent),
-    radial-gradient(1px 1px at 150px 100px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(
+      1px 1px at 150px 100px,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    ),
     radial-gradient(1px 1px at 250px 150px, #fff, transparent);
   background-size: 300px 200px;
 }
 
 .stars-medium {
-  background-image: 
+  background-image:
     radial-gradient(2px 2px at 20px 30px, #fff, transparent),
-    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(
+      2px 2px at 40px 70px,
+      rgba(255, 255, 255, 0.8),
+      transparent
+    ),
     radial-gradient(1px 1px at 90px 40px, #fff, transparent),
-    radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(
+      1px 1px at 130px 80px,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    ),
     radial-gradient(2px 2px at 160px 30px, #fff, transparent);
   background-size: 200px 100px;
 }
 
 .stars-heavy {
-  background-image: 
+  background-image:
     radial-gradient(2px 2px at 15px 20px, #fff, transparent),
-    radial-gradient(1px 1px at 35px 50px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(
+      1px 1px at 35px 50px,
+      rgba(255, 255, 255, 0.8),
+      transparent
+    ),
     radial-gradient(2px 2px at 60px 25px, #fff, transparent),
-    radial-gradient(1px 1px at 80px 60px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(
+      1px 1px at 80px 60px,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    ),
     radial-gradient(2px 2px at 110px 15px, #fff, transparent),
-    radial-gradient(1px 1px at 140px 70px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(
+      1px 1px at 140px 70px,
+      rgba(255, 255, 255, 0.7),
+      transparent
+    ),
     radial-gradient(2px 2px at 170px 45px, #fff, transparent);
   background-size: 180px 80px;
 }
@@ -68,8 +94,12 @@ defineProps<StarfieldBackgroundProps>();
 }
 
 @keyframes twinkle {
-  0% { opacity: 0.3; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

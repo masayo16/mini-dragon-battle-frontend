@@ -1,4 +1,4 @@
-import { Sprite, Assets } from 'pixi.js';
+import { ColorMatrixFilter, Sprite, Assets } from 'pixi.js';
 import type { GridPos } from '@/game/grid/Grid';
 import { gridToPixel, pixelToGrid, TILE_SIZE } from '@/game/grid/Grid';
 
@@ -9,6 +9,8 @@ export class Player extends Sprite {
   powered = false;
   powerTimer = 0; //NOTE: 秒
 
+  private powerFilter?: ColorMatrixFilter;
+
   async init() {
     this.texture = await Assets.load('/assets/images/player.png');
     this.anchor.set(0.5);
@@ -16,14 +18,21 @@ export class Player extends Sprite {
     this.height = TILE_SIZE;
   }
 
-  powerUp(seconds = 8) {
+  async powerUp(seconds = 8) {
     this.powered = true;
     this.powerTimer = seconds;
-    this.tint = 0xffff00;
+
+    if (!this.powerFilter) {
+      this.powerFilter = new ColorMatrixFilter();
+    }
+    this.powerFilter.reset();
+    this.powerFilter.saturate(1.1, true);
+    this.powerFilter.brightness(2, true);
+    this.filters = [this.powerFilter];
   }
 
   // NOTE: 1フレーム更新：dt は秒
-  update(dt: number, isWall: (g: GridPos) => boolean) {
+  async update(dt: number, isWall: (g: GridPos) => boolean) {
     const gridPos = pixelToGrid(this);
     const center = gridToPixel(gridPos);
     const dist = Math.hypot(this.x - center.x, this.y - center.y);
@@ -32,7 +41,9 @@ export class Player extends Sprite {
       this.powerTimer -= dt;
       if (this.powerTimer <= 0) {
         this.powered = false;
-        this.tint = 0xffffff;
+
+        this.filters = null; // NOTE: フィルターを解除
+        this.powerFilter?.reset();
       }
     }
 

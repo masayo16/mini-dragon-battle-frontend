@@ -9,7 +9,6 @@ definePageMeta({
 
 const container = ref<HTMLDivElement | null>(null);
 
-// NOTE: onMountedでPixi.Applicationを初期化
 onMounted(() => {
   useGame(container);
 });
@@ -17,7 +16,6 @@ onMounted(() => {
 
 <template>
   <div class="play-root">
-    <!-- 画面中央に 640x480 のキャンバスを出すだけ -->
     <div ref="container" class="game-container" />
   </div>
 </template>

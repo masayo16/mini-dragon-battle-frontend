@@ -2,11 +2,6 @@
 import { onMounted, ref } from 'vue';
 import { useGame } from '~/composables/useGame';
 
-// NOTE: Pixiはブラウザ専用、SSRを無効にする
-definePageMeta({
-  ssr: false,
-});
-
 const container = ref<HTMLDivElement | null>(null);
 
 onMounted(() => {

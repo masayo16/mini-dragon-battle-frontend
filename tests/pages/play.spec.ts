@@ -12,7 +12,6 @@ describe('play ページ', () => {
     const wrapper = mount(PlayPage);
 
     expect(wrapper.find('.game-container').exists()).toBe(true);
-
     expect(mockedUseGame).toHaveBeenCalledTimes(1);
   });
 });

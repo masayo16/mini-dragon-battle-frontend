@@ -80,10 +80,10 @@ export class GameEngine {
 
   private onKeyDown = (e: KeyboardEvent) => {
     const map: Record<string, GridPos> = {
-      ArrowLeft: { row: -1, col: 0 },
-      ArrowUp: { row: 0, col: -1 },
-      ArrowRight: { row: 1, col: 0 },
-      ArrowDown: { row: 0, col: 1 },
+      ArrowLeft: { row: 0, col: -1 },
+      ArrowUp: { row: -1, col: 0 },
+      ArrowRight: { row: 0, col: 1 },
+      ArrowDown: { row: 1, col: 0 },
     };
     const d = map[e.key];
     if (d) this.player.nextDir = d;

@@ -4,6 +4,7 @@ export default defineVitestConfig({
   test: {
     include: ['tests/**/*.spec.ts', 'tests/**/*.nuxt.spec.ts'],
     setupFiles: ['./tests/setup.ts'],
+    environment: 'jsdom',
     environmentOptions: {
       nuxt: {
         overrides: {

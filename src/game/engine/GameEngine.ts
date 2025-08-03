@@ -1,10 +1,10 @@
 import * as PIXI from 'pixi.js';
-import { loadLevel } from '../grid/LevelLoader';
+import { loadLevel } from '@/game/grid/LevelLoader';
 import { Player } from '../entities/Player';
-import { gridToPixel } from '../grid/Grid';
-import type { GridPos } from '../grid/Grid';
+import { gridToPixel } from '@/game/grid/Grid';
+import type { GridPos } from '@/game/grid/Grid';
 import { useScoreStore } from '@/stores/score.store';
-import { absDist } from '../grid/AbsDist';
+import { absDist } from '@/game/grid/AbsDist';
 
 type IsWallFn = (g: GridPos) => boolean;
 
@@ -90,8 +90,12 @@ export class GameEngine {
   };
 
   private onTick = () => {
+    console.log('GameEngine.onTick');
     const dt = this.app.ticker.deltaMS / 1000;
     this.player.update(dt, this.isWall);
+
+    console.log(`Player position: (${this.player.x}, ${this.player.y})`);
+    console.log(`Dots remaining: ${this.dots.size}`);
 
     this.checkPickups(this.dots, this.cfg.dotScore);
     this.checkPickups(this.powers, this.cfg.powerScore, true);
@@ -102,16 +106,26 @@ export class GameEngine {
     score: number,
     isPower = false,
   ) {
+    console.log(`Checking pickups: ${pools.size} items`);
     for (const sp of pools) {
       if (absDist(this.player, sp) < this.cfg.collisionRadius) {
         pools.delete(sp);
         this.app.stage.removeChild(sp);
+        console.log(score, 'points added');
         this.scoreStore.add(score);
+        console.log(
+          `Picked up ${isPower ? 'power' : 'dot'} at (${sp.x}, ${sp.y})`,
+        );
 
         if (isPower) {
           this.player.powerUp();
         }
       }
     }
+  }
+
+  // NOTE: テストや GameLoopAdapter などの外部から、プライベートメンバーに直接アクセスせずに、1フレーム進める。
+  public tick(): void {
+    this.onTick();
   }
 }

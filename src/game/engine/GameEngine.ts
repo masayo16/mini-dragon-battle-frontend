@@ -123,4 +123,9 @@ export class GameEngine {
       }
     }
   }
+
+  // NOTE: テストや GameLoopAdapter などの外部から、プライベートメンバーに直接アクセスせずに、1フレーム進める。
+  public tick(): void {
+    this.onTick();
+  }
 }

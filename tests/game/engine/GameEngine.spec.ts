@@ -3,7 +3,7 @@ import { GameEngine } from '~/game/engine/GameEngine';
 import { Application } from '~~/__mocks__/pixi.js';
 
 /* eslint-disable-next-line */
-type AnyEngine = any; // TODO: つぎのcommitで消す
+type AnyEngine = any; // TODO: コンストラクタ DI へ設計変更したら、型ハックを削除する
 
 const mockAdd = vi.fn();
 
@@ -19,7 +19,7 @@ vi.mock('@/game/grid/AbsDist', () => {
   };
 });
 
-describe('GameEngine.onTick', () => {
+describe('GameEngine.tick', () => {
   let engine: GameEngine & AnyEngine;
 
   beforeEach(() => {
@@ -40,8 +40,7 @@ describe('GameEngine.onTick', () => {
   });
 
   it('eats dots and adds score', () => {
-    const tick = engine.onTick as () => void;
-    tick();
+    engine.tick();
     expect(mockAdd).toHaveBeenCalledWith(10);
     expect(engine.dots.size).toBe(0);
     expect(engine.app.stage.removeChild).toHaveBeenCalledTimes(1);

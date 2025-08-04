@@ -45,7 +45,7 @@ jobs:
         run: |
           pnpm run lint
           pnpm type-check
-          pnpm test --coverage
+          pnpm test
 
       - name: Generate .env
         run: |

@@ -41,8 +41,12 @@ jobs:
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
-      - run: pnpm run lint
-      - run: pnpm test
+      - name: lint / typecheck / test
+        run: |
+          pnpm run lint
+          pnpm type-check
+          pnpm test
+
       - name: Generate .env
         run: |
           cat<<EOF > .env

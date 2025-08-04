@@ -44,7 +44,7 @@ jobs:
       - name: lint / typecheck / test
         run: |
           pnpm run lint
-          pnpm typecheck
+          pnpm type-check
           pnpm test --coverage
 
       - name: Generate .env

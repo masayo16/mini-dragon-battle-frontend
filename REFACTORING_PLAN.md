@@ -78,12 +78,47 @@ export type LevelData = {
 7. InputHandler分離
 8. GameEngine簡素化
 
+## 設計課題と解決策
+
+### 現在のwalls設計の問題
+```typescript
+// GameEngine.ts
+private walls = new Set<string>();
+
+// loadLevel関数
+await loadLevel('/assets/level/level1.txt', this.app.stage, this.walls);
+```
+
+**問題点**:
+- GameEngineがwallsの状態を管理
+- loadLevelが外部のSetを変更（副作用）
+- parseLevel結果との二重管理
+
+### 改善案
+```typescript
+// loadLevel関数
+const levelData = await loadLevel('/assets/level/level1.txt', this.app.stage);
+this.walls = levelData.walls; // 直接代入
+
+// または
+const { walls, dots, powers } = await loadLevel(...);
+this.walls = walls;
+```
+
+**利点**:
+- 関数の副作用を削除
+- データフローが明確
+- parseLevel結果を直接活用
+
 ## 進行状況
 - [x] 問題分析完了
 - [x] アプローチ決定  
 - [x] 詳細なファイル構成設計
-- [x] LevelData型定義作成 (src/game/grid/LevelLoader.ts:5-9)
-- [ ] parseLevel関数のテスト作成 ← 現在ここ
-- [ ] parseLevel関数実装
+- [x] LevelData型定義作成
+- [x] parseLevel関数のテスト作成
+- [x] parseLevel関数実装
+- [x] walls設計課題の特定 ← 現在ここ
+- [ ] loadLevel関数の修正
+- [ ] GameEngine側の修正
 - [ ] 既存機能の段階的分離
 - [ ] 動作確認とテスト

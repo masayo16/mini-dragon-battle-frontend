@@ -4,13 +4,8 @@ export const Application = vi.fn().mockImplementation(() => {
   return {
     canvas: document.createElement('canvas'),
     init: vi.fn().mockResolvedValue(void 0),
-    ticker: {
-      deltaMs: 16.67,
-      add: vi.fn(),
-      stop: vi.fn(),
-      start: vi.fn(),
-    },
-    stage: { addChild: vi.fn(), removeChild: vi.fn() },
+    ticker: { add: vi.fn(), stop: vi.fn(), start: vi.fn() },
+    stage: { addChild: vi.fn() },
     screen: { width: 800, height: 600 },
   };
 });

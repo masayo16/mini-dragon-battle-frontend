@@ -132,6 +132,34 @@ this.walls = walls;
 - [ ] InputHandler分離
 - [ ] GameEngine簡素化
 
+## テスト戦略
+
+### PIXIモック戦略（完全モック）
+```typescript
+// __mocks__/pixi.js
+export class Sprite {
+  constructor(texture) {
+    this.texture = texture;
+    this.x = 0;
+    this.y = 0;
+    this.anchor = { set: vi.fn() };
+    this.position = { set: vi.fn() };
+  }
+}
+
+export class Container {
+  constructor() {
+    this.children = [];
+    this.addChild = vi.fn();
+  }
+}
+```
+
+**利点**:
+- テスト高速実行
+- PIXIの複雑な初期化不要  
+- ロジックに焦点、描画結果は対象外
+
 ## 現在の技術的課題
 
 ### DRY違反（一時的に許容中）

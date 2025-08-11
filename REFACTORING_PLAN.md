@@ -110,15 +110,39 @@ this.walls = walls;
 - データフローが明確
 - parseLevel結果を直接活用
 
-## 進行状況
-- [x] 問題分析完了
-- [x] アプローチ決定  
-- [x] 詳細なファイル構成設計
+## 実装ステップ
+
+### フェーズ1: LevelLoader基盤整備
 - [x] LevelData型定義作成
-- [x] parseLevel関数のテスト作成
-- [x] parseLevel関数実装
-- [x] walls設計課題の特定 ← 現在ここ
-- [ ] loadLevel関数の修正
-- [ ] GameEngine側の修正
-- [ ] 既存機能の段階的分離
-- [ ] 動作確認とテスト
+- [x] parseLevel関数のテスト作成・実装
+- [x] loadLevel関数の副作用削除（walls引数削除）
+- [x] GameEngine側の呼び出し修正
+- [x] バグ修正（dotが消えない問題）
+
+### フェーズ2: 段階的分離（現在のフェーズ）
+- [ ] LevelSpriteFactory のテスト作成 ← 現在ここ
+- [ ] LevelSpriteFactory 実装
+- [ ] loadLevel関数でLevelSpriteFactory活用（DRY違反解消）
+- [ ] LevelAssetManager 分離
+- [ ] loadLevel関数の最終リファクタリング
+
+### フェーズ3: GameEngine分離
+- [ ] CollisionDetector分離
+- [ ] ScoreManager分離  
+- [ ] InputHandler分離
+- [ ] GameEngine簡素化
+
+## 現在の技術的課題
+
+### DRY違反（一時的に許容中）
+```typescript
+// LevelLoader.ts で発生している重複
+const levelData = parseLevel(levelText); // 解析
+// + 59-75行目で同じデータからSprite作成
+```
+→ **LevelSpriteFactory**で解決予定
+
+## 進行状況
+- [x] フェーズ1完了
+- [ ] フェーズ2: LevelSpriteFactoryテスト作成中
+- [ ] フェーズ3未着手

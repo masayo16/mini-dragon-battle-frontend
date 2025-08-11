@@ -64,24 +64,13 @@ export async function loadLevel(
     dots.add(sprite);
   });
 
-  levelText.split('\n').forEach((line, row) => {
-    [...line].forEach((ch, col) => {
-      const pos = gridToPixel({ col, row });
-      let sprite: Sprite | null = null;
-      switch (ch) {
-        case ' ':
-          break;
-        case 'o':
-          sprite = new Sprite(powerTex);
-          powers.add(sprite);
-          break;
-      }
-      if (sprite) {
-        sprite.anchor.set(0.5);
-        sprite.position.set(pos.x, pos.y);
-        stage.addChild(sprite);
-      }
-    });
+  levelData.powers.forEach(({ col, row }) => {
+    const pixelPos = gridToPixel({ col, row });
+    const sprite = new Sprite(powerTex);
+    sprite.anchor.set(0.5);
+    sprite.position.set(pixelPos.x, pixelPos.y);
+    stage.addChild(sprite);
+    powers.add(sprite);
   });
 
   return { walls, dots, powers };

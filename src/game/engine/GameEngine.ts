@@ -49,11 +49,11 @@ export class GameEngine {
     });
     container.appendChild(this.app.canvas);
 
-    const { dots, powers } = await loadLevel(
+    const { walls, dots, powers } = await loadLevel(
       '/assets/level/level1.txt',
       this.app.stage,
-      this.walls,
     );
+    this.walls = walls;
     this.dots = dots;
     this.powers = powers;
 
@@ -76,7 +76,7 @@ export class GameEngine {
     this.walls.clear();
   }
 
-  private readonly isWall: IsWallFn = g => this.walls.has(`${g.row},${g.col}`);
+  private readonly isWall: IsWallFn = g => this.walls.has(`${g.col},${g.row}`);
 
   private onKeyDown = (e: KeyboardEvent) => {
     const map: Record<string, GridPos> = {

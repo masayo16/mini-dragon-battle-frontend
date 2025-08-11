@@ -162,13 +162,64 @@ export class Container {
 
 ## 現在の技術的課題
 
-### DRY違反（一時的に許容中）
+### loadLevel関数の責務過多
 ```typescript
-// LevelLoader.ts で発生している重複
-const levelData = parseLevel(levelText); // 解析
-// + 59-75行目で同じデータからSprite作成
+// src/game/grid/LevelLoader.ts の現在の構造
+export async function loadLevel() {
+  // 10-12行目: アセット読み込み
+  const wallTex = await Assets.load('/assets/images/wall.png');
+  
+  // 14-15行目: レベルデータ取得・解析
+  const levelText = await (await fetch(file)).text();
+  const levelData = parseLevel(levelText);
+  
+  // 21-46行目: Sprite作成（LevelSpriteFactory候補）
+  levelData.walls.forEach(key => { /* wallスプライト作成 */ });
+  levelData.dots.forEach(({ col, row }) => { /* dotスプライト作成 */ });
+  levelData.powers.forEach(({ col, row }) => { /* powerスプライト作成 */ });
+}
 ```
-→ **LevelSpriteFactory**で解決予定
+
+### LevelSpriteFactory分離計画
+**抽出対象**: 21-46行目のSprite作成処理
+```typescript
+class LevelSpriteFactory {
+  createSprites(levelData: LevelData, textures: LevelTextures, stage: Container): LevelSprites {
+    const dots = new Set<Sprite>();
+    const powers = new Set<Sprite>();
+    
+    // walls: 21-28行目の処理を移動
+    levelData.walls.forEach(key => {
+      const [col, row] = key.split(',').map(Number);
+      const pixelPos = gridToPixel({ col, row });
+      const sprite = new Sprite(textures.wall);
+      sprite.anchor.set(0.5);
+      sprite.position.set(pixelPos.x, pixelPos.y);
+      stage.addChild(sprite);
+    });
+    
+    // dots: 30-37行目の処理を移動
+    // powers: 39-46行目の処理を移動
+    
+    return { walls: levelData.walls, dots, powers };
+  }
+}
+```
+
+**型定義**:
+```typescript
+interface LevelTextures {
+  wall: PIXI.Texture;
+  dot: PIXI.Texture;
+  power: PIXI.Texture;
+}
+
+interface LevelSprites {
+  walls: Set<string>;
+  dots: Set<PIXI.Sprite>;
+  powers: Set<PIXI.Sprite>;
+}
+```
 
 ## 進行状況
 - [x] フェーズ1完了

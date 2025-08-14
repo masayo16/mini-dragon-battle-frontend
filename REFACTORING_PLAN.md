@@ -13,28 +13,37 @@
 
 **抽出対象**: `loadLevel`関数の21-46行目のSprite作成処理
 
+**改善設計**: 単一責務（作成のみ）で配置は呼び出し側
+
 ```typescript
 class LevelSpriteFactory {
-  createSprites(levelData: LevelData, textures: LevelTextures, stage: Container): LevelSprites {
-    const dots = new Set<Sprite>();
-    const powers = new Set<Sprite>();
+  createSprites(levelData: LevelData, textures: LevelTextures): LevelSprites {
+    const wallSprites: Sprite[] = [];
+    const dotSprites: Sprite[] = [];
+    const powerSprites: Sprite[] = [];
     
-    // walls: 21-28行目の処理を移動
+    // walls: 21-28行目の作成処理のみ移動（stage.addChild除く）
     levelData.walls.forEach(key => {
       const [col, row] = key.split(',').map(Number);
       const pixelPos = gridToPixel({ col, row });
       const sprite = new Sprite(textures.wall);
       sprite.anchor.set(0.5);
       sprite.position.set(pixelPos.x, pixelPos.y);
-      stage.addChild(sprite);
+      wallSprites.push(sprite);
     });
     
-    // dots: 30-37行目の処理を移動
-    // powers: 39-46行目の処理を移動
+    // dots: 30-37行目の作成処理のみ移動
+    // powers: 39-46行目の作成処理のみ移動
     
-    return { walls: levelData.walls, dots, powers };
+    return { wallSprites, dotSprites, powerSprites };
   }
 }
+
+// 使用例（loadLevel内）
+const sprites = factory.createSprites(levelData, textures);
+sprites.wallSprites.forEach(sprite => stage.addChild(sprite));
+const dots = new Set(sprites.dotSprites);
+const powers = new Set(sprites.powerSprites);
 ```
 
 ### 型定義
@@ -46,9 +55,9 @@ interface LevelTextures {
 }
 
 interface LevelSprites {
-  walls: Set<string>;
-  dots: Set<PIXI.Sprite>;
-  powers: Set<PIXI.Sprite>;
+  wallSprites: PIXI.Sprite[];
+  dotSprites: PIXI.Sprite[];
+  powerSprites: PIXI.Sprite[];
 }
 ```
 

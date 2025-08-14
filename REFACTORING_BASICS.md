@@ -12,7 +12,7 @@ src/game/
 ├── level/
 │   ├── LevelDataLoader.ts      # レベル文字列解析のみ
 │   ├── LevelAssetManager.ts    # アセット読み込み管理
-│   └── LevelSpriteFactory.ts   # Sprite作成 + Stage追加
+│   └── LevelSpriteFactory.ts   # Sprite作成のみ（Stage追加は Composition Root/呼び出し側）
 ├── logic/
 │   ├── CollisionDetector.ts    # 衝突判定ロジック
 │   ├── ScoreManager.ts         # スコア管理
@@ -20,9 +20,13 @@ src/game/
 ├── engine/
 │   ├── GameEngine.ts           # PIXIアプリ管理 + オーケストレーション
 │   └── GameLoop.ts             # ゲームループ管理
+├── composition/
+│   └── Boot.ts                 # 依存注入と Stage への追加（Composition Root）
 └── entities/
     └── Player.ts               # 既存
 ```
+
+**備考**: Factory は Sprite 作成のみに限定し、配置（`stage.addChild`）やアセットロードは `composition/Boot.ts`（Composition Root）に集約する。
 
 ## 学習目標
 - SRP: 1クラス1責務

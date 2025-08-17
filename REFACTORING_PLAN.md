@@ -1,6 +1,6 @@
 # リファクタリング計画
 
-## フェーズ2: LevelSpriteFactory分離（🔄進行中）
+## フェーズ2: LevelSpriteFactory分離（🔄進行中 - ステップ3）
 
 ### 目標
 - LevelLoaderからSprite生成ロジックを分離
@@ -9,28 +9,31 @@
 
 ### テストファースト開発ステップ
 
-#### ステップ1: 最小テスト作成（🔄進行中）
+#### ステップ1: 最小テスト作成（✅完了）
 - [x] テストファイル`LevelSpriteFactory.spec.ts`基盤作成
-- [ ] 空データテストの実装完了（最小実装のベース）
-- [ ] 壁1つ作成テストの実装
-- [ ] テストを通す最小実装
+- [x] 空データテストの実装完了（最小実装のベース）
+- [x] 壁1つ作成テストの実装
+- [x] ドット1つ作成テストの実装
+- [x] パワー1つ作成テストの実装
+- [x] テストを通す最小実装
 
-#### ステップ2: 基本機能のTDD（Red-Green-Refactor）
-- [ ] **Red**: 壁Sprite作成テスト（失敗）
-- [ ] **Green**: createWallSprite最小実装
-- [ ] **Refactor**: 壁作成ロジックの改善
-- [ ] **Red**: ドットSprite作成テスト（失敗）
-- [ ] **Green**: createDotSprite最小実装
-- [ ] **Refactor**: ドット作成ロジックの改善
-- [ ] **Red**: パワーSprite作成テスト（失敗）
-- [ ] **Green**: createPowerSprite最小実装
-- [ ] **Refactor**: パワー作成ロジックの改善
+#### ステップ2: 基本機能のTDD（✅完了）
+- [x] **Red**: 壁Sprite作成テスト（失敗）
+- [x] **Green**: createWallSprite最小実装
+- [x] **Refactor**: 壁作成ロジックの改善
+- [x] **Red**: ドットSprite作成テスト（失敗）
+- [x] **Green**: createDotSprite最小実装
+- [x] **Refactor**: ドット作成ロジックの改善
+- [x] **Red**: パワーSprite作成テスト（失敗）
+- [x] **Green**: createPowerSprite最小実装
+- [x] **Refactor**: パワー作成ロジックの改善
 
-#### ステップ3: インターフェース設計の検証
-- [ ] 複数要素テスト（壁+ドット+パワー）
+#### ステップ3: インターフェース設計の検証（🔄進行中）
+- [x] 複数要素テスト（壁+ドット+パワー）
+- [x] toContainEqual()を使った深い等価性テスト実装
 - [ ] エラーケーステスト（不正なテクスチャ）
 - [ ] パフォーマンステスト（大量データ）
-- [ ] LevelTextures型の最終確定
+- [x] LevelTextures型の最終確定
 
 #### ステップ4: 統合テスト準備
 - [ ] モックテクスチャ作成ヘルパー

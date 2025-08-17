@@ -101,4 +101,43 @@ describe('LevelSpriteFactory', () => {
     expect(powerSprite.position.x).toBe(112);
     expect(powerSprite.position.y).toBe(48);
   });
+
+  it('壁、ドット、パワーを複数作成', () => {
+    const levelData: LevelData = {
+      walls: new Set([`0,0`, `1,2`]),
+      dots: [
+        { col: 2, row: 1 },
+        { col: 2, row: 3 },
+      ],
+      powers: [{ col: 3, row: 4 }],
+    };
+    const textures: LevelTextures = {
+      wall: new Texture(),
+      dot: new Texture(),
+      power: new Texture(),
+    };
+    const factory = new LevelSpriteFactory();
+
+    const sprites = factory.createSprites(levelData, textures);
+
+    const wallPositions = Array.from(sprites.walls).map(s => ({
+      x: s.position.x,
+      y: s.position.y,
+    }));
+    expect(wallPositions).toContainEqual({ x: 16, y: 16 });
+    expect(wallPositions).toContainEqual({ x: 48, y: 80 });
+
+    const dotPosition = Array.from(sprites.dots).map(s => ({
+      x: s.position.x,
+      y: s.position.y,
+    }));
+    expect(dotPosition).toContainEqual({ x: 80, y: 48 });
+    expect(dotPosition).toContainEqual({ x: 80, y: 112 });
+
+    const powerPosition = Array.from(sprites.powers).map(s => ({
+      x: s.position.x,
+      y: s.position.y,
+    }));
+    expect(powerPosition).toContainEqual({ x: 112, y: 144 });
+  });
 });

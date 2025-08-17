@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseLevel } from '@/game/grid/LevelLoader';
+import { parseLevel } from '~/game/level/LevelDataLoader';
 
 describe('parseLevel()', () => {
   it('壁の解析', () => {

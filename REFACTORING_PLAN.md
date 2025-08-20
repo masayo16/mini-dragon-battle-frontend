@@ -9,36 +9,43 @@
 
 ### テストファースト開発ステップ
 
-#### ステップ1: 最小テスト作成（✅完了）
-- [x] テストファイル`LevelSpriteFactory.spec.ts`基盤作成
-- [x] 空データテストの実装完了（最小実装のベース）
-- [x] 壁1つ作成テストの実装
-- [x] ドット1つ作成テストの実装
-- [x] パワー1つ作成テストの実装
-- [x] テストを通す最小実装
 
-#### ステップ2: 基本機能のTDD（✅完了）
-- [x] **Red**: 壁Sprite作成テスト（失敗）
-- [x] **Green**: createWallSprite最小実装
-- [x] **Refactor**: 壁作成ロジックの改善
-- [x] **Red**: ドットSprite作成テスト（失敗）
-- [x] **Green**: createDotSprite最小実装
-- [x] **Refactor**: ドット作成ロジックの改善
-- [x] **Red**: パワーSprite作成テスト（失敗）
-- [x] **Green**: createPowerSprite最小実装
-- [x] **Refactor**: パワー作成ロジックの改善
+#### ステップ3: LevelAssetManager実装（✅完了）
 
-#### ステップ3: インターフェース設計の検証（🔄進行中）
-- [x] 複数要素テスト（壁+ドット+パワー）
-- [x] toContainEqual()を使った深い等価性テスト実装
-- [ ] エラーケーステスト（不正なテクスチャ）
+**3.1 LevelAssetManager基本実装**
+- [x] LevelAssetManager.tsファイル作成
+- [x] テクスチャ読み込みインターフェース設計（LevelTexturesインターフェース）
+- [x] 基本的なloadTextures()メソッドの実装
+- [x] テスト作成（TDD）
+
+**3.2 PIXIアセット統合**
+- [x] PIXI.Assets.load()の統合
+- [x] async/await対応
+- [x] テクスチャパス管理（wall.png, dot.png, power.png）
+
+**3.3 エラーハンドリング実装**
+- [ ] ファイル読み込み失敗時の例外処理
+- [ ] 無効なテクスチャ検証
+- [ ] ログ出力機能
+
+**3.4 キャッシュ機能実装**
+- [ ] テクスチャキャッシュ機能
+- [ ] メモリ効率の最適化
+
+#### ステップ4: level/ディレクトリ統合
+
+**4.1 LevelSpriteFactory強化**
+- [ ] LevelAssetManagerとの連携
+- [ ] エラーハンドリング追加（無効テクスチャ対応）
 - [ ] パフォーマンステスト（大量データ）
-- [x] LevelTextures型の最終確定
 
-#### ステップ4: 統合テスト準備
-- [ ] モックテクスチャ作成ヘルパー
-- [ ] テストデータファクトリー作成
-- [ ] LevelLoaderとの統合テスト設計
+**4.2 LevelDataLoader強化**
+- [ ] エラーハンドリング（不正なレベルデータ）
+- [ ] バリデーション機能
+
+**4.3 レベル読み込み統合テスト**
+- [ ] AssetManager + DataLoader + SpriteFactory統合テスト
+- [ ] エンドツーエンドテスト
 
 #### ステップ5: データ構造統一（walls型の一貫性）
 - [ ] LevelData型の統一（walls: Set<string> → GridPos[]）
@@ -48,7 +55,7 @@
 
 #### ステップ6: 既存コードとの統合（テスト保護下）
 - [ ] 既存LevelLoader機能のテストカバレッジ確認
-- [ ] Factory導入によるリファクタリング
+- [ ] 新しいlevel/アーキテクチャへの移行
 - [ ] 統合テスト実行と回帰テスト
 - [ ] 最終的なクリーンアップ
 
@@ -58,7 +65,8 @@
 src/game/
 ├── level/
 │   ├── LevelDataLoader.ts      # Level データ解析（純粋ロジック）
-│   └── LevelSpriteFactory.ts   # Sprite作成のみ
+│   ├── LevelSpriteFactory.ts   # Sprite作成のみ
+│   └── LevelAssetManager.ts    # テクスチャ読み込み・管理
 ├── composition/
 │   └── Boot.ts                 # 依存注入とStage追加（Composition Root）
 └── entities/

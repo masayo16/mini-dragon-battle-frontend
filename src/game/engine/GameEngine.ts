@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { loadLevel } from '../grid/LevelLoader';
+import { loadLevel } from '../level/LevelLoader';
 import { Player } from '../entities/Player';
 import { gridToPixel } from '../grid/Grid';
 import type { GridPos } from '../grid/Grid';

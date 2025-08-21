@@ -73,3 +73,10 @@ export const Assets = {
   load: vi.fn().mockResolvedValue(new Texture()),
   get: vi.fn().mockReturnValue(new Texture()),
 };
+
+export const Container = vi.fn().mockImplementation(() => ({
+  addChild: vi.fn(),
+  removeChild: vi.fn(),
+  children: [],
+  destroy: vi.fn(),
+}));

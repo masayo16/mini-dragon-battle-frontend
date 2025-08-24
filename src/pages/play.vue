@@ -75,6 +75,7 @@ const handleClearRestart = async () => {
 .play-root {
   width: 100%;
   min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -83,6 +84,34 @@ const handleClearRestart = async () => {
   padding: 2rem 1rem;
   box-sizing: border-box;
   overflow-y: auto;
+  position: relative;
+  font-family: 'Courier New', monospace;
+}
+
+.play-root::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(2px 2px at 25px 25px, #fff, transparent),
+    radial-gradient(1px 1px at 75px 75px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(3px 3px at 125px 25px, #fff, transparent),
+    radial-gradient(2px 2px at 175px 125px, rgba(255,255,255,0.9), transparent),
+    radial-gradient(1px 1px at 50px 100px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(2px 2px at 150px 75px, rgba(255,255,255,0.7), transparent);
+  background-repeat: repeat;
+  background-size: 200px 150px;
+  animation: twinkle-slow 3s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes twinkle-slow {
+  0% { opacity: 0.4; }
+  100% { opacity: 0.8; }
 }
 
 .game-header {
@@ -90,6 +119,8 @@ const handleClearRestart = async () => {
   justify-content: center;
   align-items: center;
   gap: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .game-container {
@@ -98,6 +129,27 @@ const handleClearRestart = async () => {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+  z-index: 1;
+  border: 2px solid #00ffff;
+  border-radius: 8px;
+  box-shadow: 
+    0 0 20px rgba(0, 255, 255, 0.2),
+    inset 0 0 20px rgba(0, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+.game-container::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 1px solid #ff00ff;
+  border-radius: 10px;
+  z-index: -1;
 }
 
 @media (max-width: 768px) {

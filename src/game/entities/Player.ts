@@ -8,6 +8,9 @@ export class Player extends Sprite {
   nextDir: GridPos = { col: 0, row: 0 };
   powered = false;
   powerTimer = 0; //NOTE: 秒
+  lives = 3; // NOTE: 残機数
+  isInvulnerable = false; // NOTE: 無敵状態（リスポーン直後）
+  invulnerabilityTimer = 0; // NOTE: 無敵時間
 
   private powerFilter?: ColorMatrixFilter;
 
@@ -31,11 +34,38 @@ export class Player extends Sprite {
     this.filters = [this.powerFilter];
   }
 
+  // NOTE: 残機を失う
+  loseLife(): boolean {
+    this.lives--;
+    this.isInvulnerable = true;
+    this.invulnerabilityTimer = 3; // NOTE: 3秒間無敵
+    this.alpha = 0.5; // NOTE: 無敵状態の視覚表現
+    
+    return this.lives <= 0; // NOTE: ゲームオーバーかどうかを返す
+  }
+
+  // NOTE: リスポーン処理
+  respawn(spawnPos: GridPos) {
+    const spawn = gridToPixel(spawnPos);
+    this.position.set(spawn.x, spawn.y);
+    this.dir = { col: 0, row: 0 };
+    this.nextDir = { col: 0, row: 0 };
+  }
+
   // NOTE: 1フレーム更新：dt は秒
   async update(dt: number, isWall: (g: GridPos) => boolean) {
     const gridPos = pixelToGrid(this);
     const center = gridToPixel(gridPos);
     const dist = Math.hypot(this.x - center.x, this.y - center.y);
+
+    // NOTE: 無敵時間の処理
+    if (this.isInvulnerable) {
+      this.invulnerabilityTimer -= dt;
+      if (this.invulnerabilityTimer <= 0) {
+        this.isInvulnerable = false;
+        this.alpha = 1; // NOTE: 通常の透明度に戻す
+      }
+    }
 
     if (this.powered) {
       this.powerTimer -= dt;

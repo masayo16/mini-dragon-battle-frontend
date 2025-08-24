@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useGoogleAuth } from '~/composables/useGoogleAuth';
 import { useRouter } from 'vue-router';
+import { useScoreStore } from '~/stores/score.store';
+import { usePlayerStore } from '~/stores/player.store';
+import { useGameStore } from '~/stores/game.store';
 import LoadingIndicator from '~/components/LoadingIndicator.vue';
 
 useHead({
@@ -13,11 +16,18 @@ useHead({
 const router = useRouter();
 const loading = useLoadingStore();
 const { loginWithGoogle } = useGoogleAuth();
+const scoreStore = useScoreStore();
+const playerStore = usePlayerStore();
+const gameStore = useGameStore();
 
 const handleLogin = async () => {
   loading.startLoading();
   try {
     await loginWithGoogle();
+    // NOTE: メインメニューからゲーム開始時はスコアをリセット
+    await scoreStore.reset();
+    playerStore.reset();
+    gameStore.reset();
     await router.push({ name: 'play' });
   } catch (error) {
     console.error(error);
@@ -33,7 +43,11 @@ const handleBack = () => {
   router.push('/');
 };
 
-const handleSkipAuth = () => {
+const handleSkipAuth = async () => {
+  // NOTE: メインメニューからゲーム開始時はスコアをリセット
+  await scoreStore.reset();
+  playerStore.reset();
+  gameStore.reset();
   router.push({ name: 'play' });
 };
 </script>

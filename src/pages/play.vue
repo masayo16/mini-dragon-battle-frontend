@@ -2,23 +2,71 @@
 import { onMounted, ref } from 'vue';
 import { useGame } from '~/composables/useGame';
 import { useScoreStore } from '~/stores/score.store';
+import { usePlayerStore } from '~/stores/player.store';
+import { useGameStore } from '~/stores/game.store';
 import ScoreBoard from '~/components/ScoreBoard.vue';
+import LivesDisplay from '~/components/LivesDisplay.vue';
+import GameOver from '~/components/GameOver.vue';
+import GameClear from '~/components/GameClear.vue';
 
 const container = ref<HTMLDivElement | null>(null);
 const scoreStore = useScoreStore();
+const playerStore = usePlayerStore();
+const gameStore = useGameStore();
+
+let gameEngine: any = null;
 
 onMounted(async () => {
+  // NOTE: メインメニューから来た場合はリセット済み、
+  // 既存スコアがある場合はそのまま継続
   await scoreStore.fetch();
-  useGame(container);
+  gameEngine = await useGame(container);
 });
+
+const handleRestart = async () => {
+  await scoreStore.reset();
+  playerStore.reset();
+  gameStore.reset();
+  
+  if (gameEngine) {
+    await gameEngine.restart();
+  }
+};
+
+const handleMenu = () => {
+  navigateTo('/');
+};
+
+const handleClearRestart = async () => {
+  await scoreStore.reset();
+  playerStore.reset();
+  gameStore.reset();
+  
+  if (gameEngine) {
+    await gameEngine.restart();
+  }
+};
 </script>
 
 <template>
   <div class="play-root">
     <div class="game-header">
       <ScoreBoard />
+      <LivesDisplay />
     </div>
     <div ref="container" class="game-container" />
+    
+    <GameOver 
+      v-if="gameStore.isGameOver"
+      @restart="handleRestart"
+      @menu="handleMenu"
+    />
+    
+    <GameClear 
+      v-if="gameStore.isGameCleared"
+      @restart="handleClearRestart"
+      @menu="handleMenu"
+    />
   </div>
 </template>
 
@@ -39,6 +87,8 @@ onMounted(async () => {
 .game-header {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 2rem;
 }
 
 .game-container {

@@ -19,10 +19,19 @@ export async function loadLevel(
   const factory = new LevelSpriteFactory();
   const sprites = factory.createSprites(levelData, textures);
   
-  // 4. StageにSprite追加
-  sprites.walls.forEach(sprite => stage.addChild(sprite));
-  sprites.dots.forEach(sprite => stage.addChild(sprite));
-  sprites.powers.forEach(sprite => stage.addChild(sprite));
+  // 4. StageにSprite追加（zIndexで描画順序を制御）
+  sprites.walls.forEach(sprite => {
+    sprite.zIndex = 0; // NOTE: 壁は最背面
+    stage.addChild(sprite);
+  });
+  sprites.dots.forEach(sprite => {
+    sprite.zIndex = 10; // NOTE: ドットは敵キャラより下
+    stage.addChild(sprite);
+  });
+  sprites.powers.forEach(sprite => {
+    sprite.zIndex = 10; // NOTE: パワーアップも敵キャラより下
+    stage.addChild(sprite);
+  });
   
   return { 
     walls: levelData.walls, 

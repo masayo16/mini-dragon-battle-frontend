@@ -60,6 +60,22 @@ export class Enemy extends Sprite {
     console.log(`Enemy respawned at position (${this.initialPosition.col}, ${this.initialPosition.row})`);
   }
 
+  // NOTE: 敵の状態を完全にリセット（リスタート用）
+  reset() {
+    this.isDefeated = false;
+    this.respawnTimer = 0;
+    this.visible = true;
+    this.alpha = 1;
+    this.dir = { col: 0, row: 0 };
+    this.nextDirectionChange = 0;
+    
+    // NOTE: 初期位置に戻す
+    const spawn = gridToPixel(this.initialPosition);
+    this.position.set(spawn.x, spawn.y);
+    this.setRandomDirection();
+    console.log(`Enemy reset to initial position (${this.initialPosition.col}, ${this.initialPosition.row})`);
+  }
+
   // NOTE: 1フレーム更新：dt は秒
   async update(dt: number, isWall: (g: GridPos) => boolean) {
     // NOTE: 倒された状態の場合は復活タイマーを更新

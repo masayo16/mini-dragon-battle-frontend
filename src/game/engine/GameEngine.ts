@@ -72,10 +72,15 @@ export class GameEngine {
     this.playerStore.setLives(this.player.lives);
     console.log(`Game initialized. Player lives: ${this.player.lives}, Store lives: ${this.playerStore.lives}`);
     
+    // NOTE: プレイヤーのzIndexを設定（最前面）
+    this.player.zIndex = 100;
     this.app.stage.addChild(this.player);
 
     // NOTE: 敵キャラを生成・配置
     await this.spawnEnemies();
+    
+    // NOTE: zIndexによる描画順序を有効化
+    this.app.stage.sortableChildren = true;
 
     window.addEventListener('keydown', this.onKeyDown);
 
@@ -108,13 +113,14 @@ export class GameEngine {
     this.dots = dots;
     this.powers = powers;
 
-    // NOTE: プレイヤーとゲーム状態をリセット
-    this.player.lives = 3;
-    this.player.respawn({ col: 14, row: 12 });
-    this.player.powered = false;
-    this.player.isInvulnerable = false;
-    this.player.alpha = 1; // NOTE: 透明度もリセット
+    // NOTE: プレイヤーの状態を完全にリセット
+    this.player.reset();
     this.playerStore.setLives(this.player.lives);
+    
+    // NOTE: 敵キャラの状態をリセット
+    for (const enemy of this.enemies) {
+      enemy.reset();
+    }
     
     console.log(`Game restarted. Player lives: ${this.player.lives}, Store lives: ${this.playerStore.lives}`);
     
@@ -174,7 +180,7 @@ export class GameEngine {
         console.log(`Picked up ${isPower ? 'power' : 'dot'}: +${score} points (distance: ${distance.toFixed(1)})`);
 
         if (isPower) {
-          this.player.powerUp();
+          this.player.powerUp(4); // NOTE: 4秒間パワーアップ
         }
         break; // 1フレームで1つだけ処理するように修正
       }
@@ -194,6 +200,10 @@ export class GameEngine {
       await enemy.init(spawn); // NOTE: 初期位置を渡す
       const pos = gridToPixel(spawn);
       enemy.position.set(pos.x, pos.y);
+      
+      // NOTE: 敵キャラのzIndexを設定（ドットより上、プレイヤーより下）
+      enemy.zIndex = 50;
+      
       this.enemies.push(enemy);
       this.app.stage.addChild(enemy);
     }

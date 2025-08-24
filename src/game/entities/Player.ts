@@ -21,7 +21,7 @@ export class Player extends Sprite {
     this.height = TILE_SIZE;
   }
 
-  async powerUp(seconds = 8) {
+  async powerUp(seconds = 5) {
     this.powered = true;
     this.powerTimer = seconds;
 
@@ -53,6 +53,23 @@ export class Player extends Sprite {
     this.position.set(spawn.x, spawn.y);
     this.dir = { col: 0, row: 0 };
     this.nextDir = { col: 0, row: 0 };
+  }
+
+  // NOTE: プレイヤーの状態を完全にリセット（リスタート用）
+  reset() {
+    this.lives = 3;
+    this.powered = false;
+    this.powerTimer = 0;
+    this.isInvulnerable = false;
+    this.invulnerabilityTimer = 0;
+    this.alpha = 1;
+    this.filters = null;
+    this.dir = { col: 0, row: 0 };
+    this.nextDir = { col: 0, row: 0 };
+    
+    // NOTE: 初期位置にリスポーン
+    this.respawn({ col: 14, row: 12 });
+    console.log('Player reset to initial state');
   }
 
   // NOTE: 1フレーム更新：dt は秒

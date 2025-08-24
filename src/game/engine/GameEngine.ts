@@ -67,10 +67,20 @@ export class GameEngine {
     await this.player.init();
     const spawn = gridToPixel({ col: 14, row: 12 });
     this.player.position.set(spawn.x, spawn.y);
+    
+    // NOTE: プレイヤーストアと同期
+    this.playerStore.setLives(this.player.lives);
+    console.log(`Game initialized. Player lives: ${this.player.lives}, Store lives: ${this.playerStore.lives}`);
+    
+    // NOTE: プレイヤーのzIndexを設定（最前面）
+    this.player.zIndex = 100;
     this.app.stage.addChild(this.player);
 
     // NOTE: 敵キャラを生成・配置
     await this.spawnEnemies();
+    
+    // NOTE: zIndexによる描画順序を有効化
+    this.app.stage.sortableChildren = true;
 
     window.addEventListener('keydown', this.onKeyDown);
 
@@ -103,12 +113,16 @@ export class GameEngine {
     this.dots = dots;
     this.powers = powers;
 
-    // NOTE: プレイヤーとゲーム状態をリセット
-    this.player.lives = 3;
-    this.player.respawn({ col: 14, row: 12 });
-    this.player.powered = false;
-    this.player.isInvulnerable = false;
+    // NOTE: プレイヤーの状態を完全にリセット
+    this.player.reset();
     this.playerStore.setLives(this.player.lives);
+    
+    // NOTE: 敵キャラの状態をリセット
+    for (const enemy of this.enemies) {
+      enemy.reset();
+    }
+    
+    console.log(`Game restarted. Player lives: ${this.player.lives}, Store lives: ${this.playerStore.lives}`);
     
     this.gameStore.startGame();
     this.app.ticker.start();
@@ -128,10 +142,15 @@ export class GameEngine {
   };
 
   private onTick = () => {
+    // ゲームが停止している場合は処理をスキップ
+    if (this.gameStore.isGameOver || this.gameStore.isGameCleared) {
+      return;
+    }
+
     const dt = this.app.ticker.deltaMS / 1000;
     this.player.update(dt, this.isWall);
 
-    // NOTE: 敵キャラを更新
+    // NOTE: 敵キャラを更新（倒された敵も復活タイマー更新のため）
     for (const enemy of this.enemies) {
       enemy.update(dt, this.isWall);
     }
@@ -152,14 +171,18 @@ export class GameEngine {
     isPower = false,
   ) {
     for (const sp of pools) {
-      if (absDist(this.player, sp) < this.cfg.collisionRadius) {
+      const distance = absDist(this.player, sp);
+      if (distance < this.cfg.collisionRadius) {
         pools.delete(sp);
         this.app.stage.removeChild(sp);
         this.scoreStore.add(score);
+        
+        console.log(`Picked up ${isPower ? 'power' : 'dot'}: +${score} points (distance: ${distance.toFixed(1)})`);
 
         if (isPower) {
-          this.player.powerUp();
+          this.player.powerUp(4); // NOTE: 4秒間パワーアップ
         }
+        break; // 1フレームで1つだけ処理するように修正
       }
     }
   }
@@ -174,9 +197,13 @@ export class GameEngine {
 
     for (const spawn of enemySpawns) {
       const enemy = new Enemy();
-      await enemy.init();
+      await enemy.init(spawn); // NOTE: 初期位置を渡す
       const pos = gridToPixel(spawn);
       enemy.position.set(pos.x, pos.y);
+      
+      // NOTE: 敵キャラのzIndexを設定（ドットより上、プレイヤーより下）
+      enemy.zIndex = 50;
+      
       this.enemies.push(enemy);
       this.app.stage.addChild(enemy);
     }
@@ -184,28 +211,39 @@ export class GameEngine {
 
   private checkEnemyCollisions() {
     // NOTE: 無敵状態の場合は衝突判定をスキップ
-    if (this.player.isInvulnerable) return;
+    if (this.player.isInvulnerable) {
+      console.log(`Skipping collision check - player is invulnerable (${this.player.invulnerabilityTimer.toFixed(1)}s remaining)`);
+      return;
+    }
 
     for (const enemy of this.enemies) {
-      if (absDist(this.player, enemy) < this.cfg.collisionRadius) {
+      // NOTE: 倒された敵は衝突判定をスキップ
+      if (enemy.isDefeated) continue;
+      
+      const distance = absDist(this.player, enemy);
+      if (distance < this.cfg.collisionRadius) {
+        console.log(`Enemy collision detected! Distance: ${distance.toFixed(1)}, Radius: ${this.cfg.collisionRadius}`);
+        
         if (this.player.powered) {
-          // NOTE: パワーアップ中は敵を倒せる
-          this.enemies.splice(this.enemies.indexOf(enemy), 1);
-          this.app.stage.removeChild(enemy);
+          // NOTE: パワーアップ中は敵を一時的に倒す（削除はしない）
+          enemy.defeat(8); // NOTE: 8秒後に復活
           this.scoreStore.add(200);
+          console.log('Enemy defeated: +200 points');
         } else {
           // NOTE: 残機を失う
           const isGameOver = this.player.loseLife();
+          console.log(`Enemy collision! Player lives before collision: ${this.player.lives + 1}, after: ${this.player.lives}`);
           
           if (isGameOver) {
             // NOTE: ゲームオーバー処理
+            console.log(`Game Over triggered with ${this.player.lives} lives remaining`);
             this.gameStore.gameOver();
             this.app.ticker.stop();
           } else {
             // NOTE: リスポーン処理
             this.player.respawn({ col: 14, row: 12 });
             this.playerStore.setLives(this.player.lives);
-            console.log(`Lives remaining: ${this.player.lives}`);
+            console.log(`Respawning player. Lives remaining: ${this.player.lives}`);
           }
         }
         break; // NOTE: 1回の衝突で複数処理されないように

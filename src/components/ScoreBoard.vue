@@ -20,68 +20,36 @@ const scoreStore = useScoreStore();
 
 <style scoped>
 .scoreboard {
-  background: linear-gradient(145deg, #1a1a2e, #16213e);
-  border: 3px solid #00ffff;
-  border-radius: 8px;
-  padding: 1rem;
-  min-width: 150px;
   text-align: center;
   font-family: 'Courier New', monospace;
-  box-shadow: 
-    0 4px 0 #004444,
-    0 8px 20px rgba(0, 0, 0, 0.3),
-    inset 0 2px 0 rgba(0, 255, 255, 0.1);
   position: relative;
-}
-
-.scoreboard::before {
-  content: '';
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  right: -2px;
-  bottom: -2px;
-  background: linear-gradient(45deg, #00ffff, #004444, #00ffff);
-  border-radius: 10px;
-  z-index: -1;
-  opacity: 0.3;
 }
 
 .score-header {
   color: #00ffff;
-  font-size: 0.9rem;
+  font-size: 0.75rem;
   font-weight: bold;
-  letter-spacing: 0.2em;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  letter-spacing: 0.15em;
+  margin-bottom: 0.2rem;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
+  text-transform: uppercase;
 }
 
 .score-value {
   color: #ffffff;
-  font-size: 1.8rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  letter-spacing: 0.1em;
-  text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);
-  transition: all 0.3s ease;
-}
-
-.score-value:hover {
-  text-shadow: 0 0 20px rgba(0, 255, 255, 1);
-  transform: scale(1.05);
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6);
 }
 
 @media (max-width: 768px) {
-  .scoreboard {
-    min-width: 120px;
-    padding: 0.8rem;
-  }
-  
   .score-header {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
   
   .score-value {
-    font-size: 1.5rem;
+    font-size: 1rem;
   }
 }
 </style>

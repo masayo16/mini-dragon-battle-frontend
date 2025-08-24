@@ -5,6 +5,8 @@ import { Enemy } from '../entities/Enemy';
 import { gridToPixel } from '../grid/Grid';
 import type { GridPos } from '../grid/Grid';
 import { useScoreStore } from '@/stores/score.store';
+import { usePlayerStore } from '@/stores/player.store';
+import { useGameStore } from '@/stores/game.store';
 import { absDist } from '../grid/AbsDist';
 
 type IsWallFn = (g: GridPos) => boolean;
@@ -35,6 +37,8 @@ export class GameEngine {
   private player!: Player;
   private enemies: Enemy[] = [];
   private readonly scoreStore = useScoreStore();
+  private readonly playerStore = usePlayerStore();
+  private readonly gameStore = useGameStore();
   private readonly cfg: GameConfig;
 
   constructor(cfh: Partial<GameConfig> = {}) {
@@ -70,6 +74,7 @@ export class GameEngine {
 
     window.addEventListener('keydown', this.onKeyDown);
 
+    this.gameStore.startGame();
     this.app.ticker.add(this.onTick);
   }
 
@@ -80,6 +85,33 @@ export class GameEngine {
     this.powers.clear();
     this.walls.clear();
     this.enemies.length = 0;
+    this.gameStore.reset();
+  }
+
+  async restart() {
+    // NOTE: 既存のスプライトを削除
+    this.dots.forEach(sprite => this.app.stage.removeChild(sprite));
+    this.powers.forEach(sprite => this.app.stage.removeChild(sprite));
+    this.dots.clear();
+    this.powers.clear();
+
+    // NOTE: レベルを再読み込み
+    const { dots, powers } = await loadLevel(
+      '/assets/level/level1.txt',
+      this.app.stage,
+    );
+    this.dots = dots;
+    this.powers = powers;
+
+    // NOTE: プレイヤーとゲーム状態をリセット
+    this.player.lives = 3;
+    this.player.respawn({ col: 14, row: 12 });
+    this.player.powered = false;
+    this.player.isInvulnerable = false;
+    this.playerStore.setLives(this.player.lives);
+    
+    this.gameStore.startGame();
+    this.app.ticker.start();
   }
 
   private readonly isWall: IsWallFn = g => this.walls.has(`${g.col},${g.row}`);
@@ -109,6 +141,9 @@ export class GameEngine {
 
     this.checkPickups(this.dots, this.cfg.dotScore);
     this.checkPickups(this.powers, this.cfg.powerScore, true);
+
+    // NOTE: ドットをすべて取ったかチェック
+    this.checkLevelClear();
   };
 
   private checkPickups(
@@ -148,6 +183,9 @@ export class GameEngine {
   }
 
   private checkEnemyCollisions() {
+    // NOTE: 無敵状態の場合は衝突判定をスキップ
+    if (this.player.isInvulnerable) return;
+
     for (const enemy of this.enemies) {
       if (absDist(this.player, enemy) < this.cfg.collisionRadius) {
         if (this.player.powered) {
@@ -156,11 +194,30 @@ export class GameEngine {
           this.app.stage.removeChild(enemy);
           this.scoreStore.add(200);
         } else {
-          // NOTE: ゲームオーバー処理（簡易版）
-          console.log('Game Over!');
-          // TODO: ゲームオーバー画面やリセット処理を実装
+          // NOTE: 残機を失う
+          const isGameOver = this.player.loseLife();
+          
+          if (isGameOver) {
+            // NOTE: ゲームオーバー処理
+            this.gameStore.gameOver();
+            this.app.ticker.stop();
+          } else {
+            // NOTE: リスポーン処理
+            this.player.respawn({ col: 14, row: 12 });
+            this.playerStore.setLives(this.player.lives);
+            console.log(`Lives remaining: ${this.player.lives}`);
+          }
         }
+        break; // NOTE: 1回の衝突で複数処理されないように
       }
+    }
+  }
+
+  private checkLevelClear() {
+    // NOTE: すべてのドットが取られた場合
+    if (this.dots.size === 0 && this.player.lives > 0) {
+      this.gameStore.gameClear();
+      this.app.ticker.stop();
     }
   }
 }

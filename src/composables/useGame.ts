@@ -10,4 +10,6 @@ export async function useGame(container: Ref<HTMLElement | null>) {
   await engine.init(container.value);
 
   onUnmounted(() => engine.destroy());
+
+  return engine;
 }

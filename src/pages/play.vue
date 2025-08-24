@@ -21,7 +21,7 @@ onMounted(async () => {
   // NOTE: メインメニューから来た場合はリセット済み、
   // 既存スコアがある場合はそのまま継続
   await scoreStore.fetch();
-  gameEngine = await useGame(container);
+  gameEngine = await useGame(container) || null;
 });
 
 const handleRestart = async () => {

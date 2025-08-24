@@ -41,7 +41,10 @@ export class Player extends Sprite {
     this.invulnerabilityTimer = 3; // NOTE: 3秒間無敵
     this.alpha = 0.5; // NOTE: 無敵状態の視覚表現
     
-    return this.lives <= 0; // NOTE: ゲームオーバーかどうかを返す
+    const isGameOver = this.lives <= 0;
+    console.log(`Player lost life! Lives remaining: ${this.lives}, Game Over: ${isGameOver}`);
+    
+    return isGameOver; // NOTE: ゲームオーバーかどうかを返す
   }
 
   // NOTE: リスポーン処理

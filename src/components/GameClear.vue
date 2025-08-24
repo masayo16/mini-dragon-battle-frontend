@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { useScoreStore } from '~/stores/score.store';
 import { usePlayerStore } from '~/stores/player.store';
 
@@ -10,15 +11,27 @@ const emit = defineEmits<{
   menu: []
 }>();
 
-const bonusScore = playerStore.lives * 1000;
-const totalScore = scoreStore.value + bonusScore;
+const bonusScore = ref(0);
+const totalScore = ref(0);
+const bonusAdded = ref(false);
 
-// NOTE: ボーナススコアを自動で加算
-scoreStore.add(bonusScore);
+onMounted(() => {
+  if (!bonusAdded.value) {
+    bonusScore.value = playerStore.lives * 1000;
+    totalScore.value = scoreStore.value + bonusScore.value;
+    
+    // NOTE: ボーナススコアを1回だけ加算
+    scoreStore.add(bonusScore.value);
+    bonusAdded.value = true;
+    
+    console.log(`Game Clear Bonus: +${bonusScore.value} points for ${playerStore.lives} lives`);
+  }
+});
 
 const handleRestart = () => {
   scoreStore.reset();
   playerStore.reset();
+  bonusAdded.value = false;
   emit('restart');
 };
 

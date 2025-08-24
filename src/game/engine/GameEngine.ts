@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { loadLevel } from '../level/LevelLoader';
 import { Player } from '../entities/Player';
+import { Enemy } from '../entities/Enemy';
 import { gridToPixel } from '../grid/Grid';
 import type { GridPos } from '../grid/Grid';
 import { useScoreStore } from '@/stores/score.store';
@@ -32,6 +33,7 @@ export class GameEngine {
   private powers = new Set<PIXI.Sprite>();
 
   private player!: Player;
+  private enemies: Enemy[] = [];
   private readonly scoreStore = useScoreStore();
   private readonly cfg: GameConfig;
 
@@ -63,6 +65,9 @@ export class GameEngine {
     this.player.position.set(spawn.x, spawn.y);
     this.app.stage.addChild(this.player);
 
+    // NOTE: 敵キャラを生成・配置
+    await this.spawnEnemies();
+
     window.addEventListener('keydown', this.onKeyDown);
 
     this.app.ticker.add(this.onTick);
@@ -74,6 +79,7 @@ export class GameEngine {
     this.dots.clear();
     this.powers.clear();
     this.walls.clear();
+    this.enemies.length = 0;
   }
 
   private readonly isWall: IsWallFn = g => this.walls.has(`${g.col},${g.row}`);
@@ -93,6 +99,14 @@ export class GameEngine {
     const dt = this.app.ticker.deltaMS / 1000;
     this.player.update(dt, this.isWall);
 
+    // NOTE: 敵キャラを更新
+    for (const enemy of this.enemies) {
+      enemy.update(dt, this.isWall);
+    }
+
+    // NOTE: プレイヤーと敵の衝突判定
+    this.checkEnemyCollisions();
+
     this.checkPickups(this.dots, this.cfg.dotScore);
     this.checkPickups(this.powers, this.cfg.powerScore, true);
   };
@@ -110,6 +124,41 @@ export class GameEngine {
 
         if (isPower) {
           this.player.powerUp();
+        }
+      }
+    }
+  }
+
+  private async spawnEnemies() {
+    const enemySpawns: GridPos[] = [
+      { col: 1, row: 1 },
+      { col: 26, row: 1 },
+      { col: 1, row: 14 },
+      { col: 26, row: 14 },
+    ];
+
+    for (const spawn of enemySpawns) {
+      const enemy = new Enemy();
+      await enemy.init();
+      const pos = gridToPixel(spawn);
+      enemy.position.set(pos.x, pos.y);
+      this.enemies.push(enemy);
+      this.app.stage.addChild(enemy);
+    }
+  }
+
+  private checkEnemyCollisions() {
+    for (const enemy of this.enemies) {
+      if (absDist(this.player, enemy) < this.cfg.collisionRadius) {
+        if (this.player.powered) {
+          // NOTE: パワーアップ中は敵を倒せる
+          this.enemies.splice(this.enemies.indexOf(enemy), 1);
+          this.app.stage.removeChild(enemy);
+          this.scoreStore.add(200);
+        } else {
+          // NOTE: ゲームオーバー処理（簡易版）
+          console.log('Game Over!');
+          // TODO: ゲームオーバー画面やリセット処理を実装
         }
       }
     }

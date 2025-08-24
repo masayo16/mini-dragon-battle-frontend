@@ -51,11 +51,16 @@ const handleClearRestart = async () => {
 
 <template>
   <div class="play-root">
-    <div class="game-header">
-      <ScoreBoard />
-      <LivesDisplay />
+    <div class="top-bar">
+      <div class="top-bar-content">
+        <ScoreBoard />
+        <LivesDisplay />
+      </div>
     </div>
-    <div ref="container" class="game-container" />
+    
+    <div class="game-area">
+      <div ref="container" class="game-container" />
+    </div>
     
     <GameOver 
       v-if="gameStore.isGameOver"
@@ -74,16 +79,12 @@ const handleClearRestart = async () => {
 <style scoped>
 .play-root {
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 2rem 1rem;
   box-sizing: border-box;
-  overflow-y: auto;
+  overflow: hidden;
   position: relative;
   font-family: 'Courier New', monospace;
 }
@@ -114,13 +115,38 @@ const handleClearRestart = async () => {
   100% { opacity: 0.8; }
 }
 
-.game-header {
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: rgba(26, 26, 46, 0.9);
+  border-bottom: 2px solid #00ffff;
+  box-shadow: 0 2px 10px rgba(0, 255, 255, 0.2);
+  z-index: 10;
+  backdrop-filter: blur(10px);
+}
+
+.top-bar-content {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 2rem;
-  position: relative;
+  gap: 4rem;
+  height: 100%;
+  padding: 0 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.game-area {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 60px;
   z-index: 1;
+  position: relative;
 }
 
 .game-container {
@@ -153,9 +179,19 @@ const handleClearRestart = async () => {
 }
 
 @media (max-width: 768px) {
-  .play-root {
-    padding: 0.5rem;
-    gap: 0.5rem;
+  .top-bar {
+    height: 50px;
+  }
+  
+  .top-bar-content {
+    gap: 2rem;
+    padding: 0 1rem;
+  }
+  
+  .game-area {
+    padding-top: 50px;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
   
   .game-container {

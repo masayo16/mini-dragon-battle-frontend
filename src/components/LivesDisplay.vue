@@ -6,7 +6,7 @@ const playerStore = usePlayerStore();
 
 <template>
   <div class="lives-display">
-    <span class="lives-label">Lives:</span>
+    <div class="lives-header">LIVES</div>
     <div class="lives-hearts">
       <span 
         v-for="n in 3" 
@@ -22,30 +22,46 @@ const playerStore = usePlayerStore();
 
 <style scoped>
 .lives-display {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  position: relative;
 }
 
-.lives-label {
-  color: #fbbf24;
+.lives-header {
+  color: #00ffff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.2rem;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.5);
+  text-transform: uppercase;
 }
 
 .lives-hearts {
   display: flex;
-  gap: 0.25rem;
+  justify-content: center;
+  gap: 0.2rem;
 }
 
 .heart {
   color: #ef4444;
   font-size: 1.2rem;
   transition: color 0.2s;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
 
 .heart--empty {
   color: #374151;
+  text-shadow: none;
+}
+
+@media (max-width: 768px) {
+  .lives-header {
+    font-size: 0.7rem;
+  }
+  
+  .heart {
+    font-size: 1rem;
+  }
 }
 </style>

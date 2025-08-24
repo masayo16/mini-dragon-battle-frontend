@@ -26,8 +26,15 @@ const handleLogin = async () => {
   }
 };
 
+const config = useRuntimeConfig();
+const isDevelopment = config.public.FIREBASE_API_KEY === 'dummy-api-key-for-development';
+
 const handleBack = () => {
   router.push('/');
+};
+
+const handleSkipAuth = () => {
+  router.push({ name: 'play' });
 };
 </script>
 
@@ -83,6 +90,7 @@ const handleBack = () => {
 
         <div class="auth-section">
           <button
+            v-if="!isDevelopment"
             class="btn-auth"
             :disabled="loading.isLoading"
             @click="handleLogin"
@@ -93,8 +101,20 @@ const handleBack = () => {
             </div>
           </button>
 
+          <button
+            v-if="isDevelopment"
+            class="btn-auth dev"
+            @click="handleSkipAuth"
+          >
+            <div class="btn-auth-content">
+              <div class="dev-icon">DEV</div>
+              <span class="btn-auth-text">SKIP AUTHENTICATION (DEV)</span>
+            </div>
+          </button>
+
           <div class="auth-info">
-            <p class="info-text">Secure login powered by Google OAuth</p>
+            <p v-if="!isDevelopment" class="info-text">Secure login powered by Google OAuth</p>
+            <p v-if="isDevelopment" class="info-text dev-text">Development mode - Authentication disabled</p>
           </div>
         </div>
       </div>
@@ -369,6 +389,44 @@ const handleBack = () => {
   color: #888;
   font-size: 0.8rem;
   letter-spacing: 0.05em;
+}
+
+.btn-auth.dev {
+  border-color: #ffff00;
+  color: #ffff00;
+  box-shadow: 
+    0 4px 0 #666600,
+    0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-auth.dev:hover {
+  box-shadow: 
+    0 6px 0 #666600,
+    0 12px 25px rgba(0, 0, 0, 0.4),
+    0 0 15px rgba(255, 255, 0, 0.3);
+}
+
+.btn-auth.dev:active {
+  box-shadow: 
+    0 2px 0 #666600,
+    0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.dev-icon {
+  width: 24px;
+  height: 24px;
+  background: #ffff00;
+  color: #000;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.7rem;
+}
+
+.dev-text {
+  color: #ffff00;
 }
 
 .login-footer {

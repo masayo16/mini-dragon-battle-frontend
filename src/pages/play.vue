@@ -4,6 +4,7 @@ import { useGame } from '~/composables/useGame';
 import { useScoreStore } from '~/stores/score.store';
 import { usePlayerStore } from '~/stores/player.store';
 import { useGameStore } from '~/stores/game.store';
+import type { GameEngine } from '~/game/engine/GameEngine';
 import ScoreBoard from '~/components/ScoreBoard.vue';
 import LivesDisplay from '~/components/LivesDisplay.vue';
 import GameOver from '~/components/GameOver.vue';
@@ -14,7 +15,7 @@ const scoreStore = useScoreStore();
 const playerStore = usePlayerStore();
 const gameStore = useGameStore();
 
-let gameEngine: any = null;
+let gameEngine: GameEngine | null = null;
 
 onMounted(async () => {
   // NOTE: メインメニューから来た場合はリセット済み、

@@ -24,12 +24,16 @@ onMounted(async () => {
 
 <style scoped>
 .play-root {
-  width: 100vw;
+  width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 1rem;
-  padding: 1rem;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .game-header {
@@ -40,6 +44,9 @@ onMounted(async () => {
 .game-container {
   width: 640px;
   height: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 @media (max-width: 768px) {
